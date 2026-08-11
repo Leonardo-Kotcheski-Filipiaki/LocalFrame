@@ -1,0 +1,30 @@
+@include_layout('header')
+
+<div class="container">
+    <h1>Novo Cliente</h1>
+    <form action="/clientes" method="post">
+        <div class="mb-3">
+            <label for="nome" class="form-label">Nome</label>
+            <input type="text" class="form-control" id="nome" name="nome" value="{{ $dados['nome'] ?? '' }}">
+        </div>
+        <div class="mb-3">
+            <label for="idade" class="form-label">Idade</label>
+            <input type="number" class="form-control" id="idade" name="idade" value="{{ $dados['idade'] ?? '' }}">
+        </div>
+        <div class="mb-3">
+            <label for="nivel" class="form-label">Nivel</label>
+            <select name="nivel" id="nivel" class="form-control">
+                @foreach ($niveis as $nivel)
+                    <option value="{{ $nivel }}" {{ $dados['nivel'] == $nivel ? 'selected' : '' }}>{{ $nivel }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="dinheiro" class="form-label">Dinheiro</label>
+            <input type="text" class="form-control" id="dinheiro" name="dinheiro" value="{{ $dados['dinheiro'] ?? '' }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+</div>
+
+@include_layout('footer')

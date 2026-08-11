@@ -1,0 +1,29 @@
+<?php
+// Exibe popups para erros que não têm elementoHTML
+$retorno = $toasts ?? $erros;
+$tipo = (!empty($toasts) ? "text-bg-success" : "text-bg-danger");
+if (!empty($retorno)):
+?>
+<div aria-live="polite" aria-atomic="true" class="position-relative">
+
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1055;">
+    @foreach($retorno as $toast) 
+      <div class="toast show align-items-center {{ $tipo }} border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+        <div class="d-flex">
+          <div class="toast-body">
+            <strong>Atenção:</strong> {{ htmlspecialchars($toast->mensagem) }}
+          </div>
+          <button type="button" class="btn-close btn-close-black me-2 m-auto" data-bs-dismiss="toast" aria-label="Close" onclick="this.closest('.toast').remove()"></button>
+        </div>
+      </div>
+    @endforeach
+  </div>
+</div>
+
+<script>
+  // Autoclose dos retorno após 5 segundos
+  setTimeout(() => {
+      document.querySelectorAll('.toast').forEach(t => t.remove());
+  }, 5000);
+</script>
+<?php endif; ?>

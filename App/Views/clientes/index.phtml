@@ -1,0 +1,43 @@
+@include_layout('header')
+
+<div class="container">
+    <!-- Cabeçalho -->
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">Clientes</h1>
+        <div class="btn-toolbar mb-2 mb-md-0 gap-3">
+            <a class="btn btn-success" href="/clientes/criar">Adicionar Cliente</a>
+            <a href="/" class="btn btn-outline-secondary">Voltar</a>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Id.:</th>
+                    <th>Nome</th>
+                    <th>Idade</th>
+                    <th>Nivel</th>
+                    <th>Dinheiro</th>
+                    <th>*</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($clientes as $cliente)
+                    <tr>
+                        <td>{{ $cliente->getId() }}</td>
+                        <td>{{ $cliente->getNome() }}</td>
+                        <td>{{ $cliente->getIdade() }}</td>
+                        <td>{{ $cliente->getStringNivel() }}</td>
+                        <td>{{ 'R$ ' . number_format($cliente->getDinheiro(), 2, ',', '.') }}</td>
+                        <td>
+                            <button class="btn btn-primary"><a style="color: white; text-decoration: none;" href="/clientes/editar/{{ $cliente->getId() }}">Editar</a></button>
+                            <button class="btn btn-danger"><a style="color: white; text-decoration: none;" href="/clientes/excluir/{{ $cliente->getId() }}">Excluir</a></button>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+@include_layout('footer')

@@ -1,0 +1,65 @@
+@include_layout('header')
+
+<div class="container">
+    <h1>Realizar Vendas</h1>
+    <form action="/vendas" method="post">
+        <div class="mb-3">
+            <label for="cliente" class="form-label">Cliente</label>
+            <select class="form-control" id="cliente" name="cliente">
+                <option value="">Selecione...</option>
+                @foreach ($clientes as $cliente)
+                    <option value="{{ $cliente->getId() }}">{{ $cliente->getNome() }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="funcionario" class="form-label">Funcionário</label>
+            <select class="form-control" id="funcionario" name="funcionario">
+                <option value="">Selecione...</option>
+                @foreach ($funcionarios as $funcionario)
+                    <option value="{{ $funcionario->getId() }}">{{ $funcionario->getNome() }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="produto" class="form-label">Produto</label>
+            <select class="form-control" id="produto" name="produto">
+                <option value="">Selecione...</option>
+                @foreach ($produtos as $produto)
+                    <option value="{{ $produto->getId() }}">{{ $produto->getProduto() }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="tipoCompra" class="form-label">Tipo de Compra</label>
+            <select class="form-control" id="tipoCompra" name="tipoCompra">
+                <option value="">Selecione...</option>
+                @foreach ($tiposCompra as $tipoCompra)
+                    <option value="{{ $tipoCompra }}">{{ $tipoCompra }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="mb-3 quantidadeParcelas" id="quantidadeParcelas_div">
+            <label for="quantidadeParcelas" class="form-label">Quantidade de Parcelas</label>
+            <input type="number" class="form-control" id="quantidadeParcelas" name="quantidadeParcelas" min="1" max="12">
+        </div>
+        <div class="mb-3">
+            <label for="quantidadeVendida" class="form-label">Quantidade Vendida</label>
+            <input type="number" class="form-control" id="quantidadeVendida" name="quantidadeVendida" min="1" max="{{ $produto->getQuantidade() }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+</div>
+<script>
+    //Validar Tipo de compra == C ou CR para habilitar campo quantidadeParcelas sem jquery
+    const tipoCompra = document.getElementById('tipoCompra');
+    const quantidadeParcelasDiv = document.getElementById('quantidadeParcelas_div');
+    tipoCompra.addEventListener('change', function () {
+        if (this.value === 'Crédito' || this.value === 'Crediário') {
+            quantidadeParcelasDiv.style.display = 'block';
+        } else {
+            quantidadeParcelasDiv.style.display = 'none';
+        }
+    });
+</script>
+@include_layout('footer')

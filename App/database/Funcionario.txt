@@ -1,0 +1,2 @@
+cargo;salario;venda;id;nome;idade
+Vendedor;5582;{"__class":"App\\Classes\\Venda","tiposCompraValidosParaDivida":[{"__enum":"App\\Enums\\TipoCompra","value":"Crédito"},{"__enum":"App\\Enums\\TipoCompra","value":"Crediário"}],"retornoDivida":null};6a7a18e9d5a3e;Marlos;44

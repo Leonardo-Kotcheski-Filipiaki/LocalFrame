@@ -1,0 +1,51 @@
+@include_layout('header')
+
+
+<div class="container">
+    <!-- Cabeçalho -->
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">Vendas</h1>
+        <div class="btn-toolbar mb-2 mb-md-0 gap-3">
+            <a class="btn btn-success" href="/vendas/criar">Realizar Venda</a>
+            <a href="/" class="btn btn-outline-secondary">Voltar</a>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Id.:</th>
+                    <th>Cliente</th>
+                    <th>Vendedor</th>
+                    <th>Produto</th>
+                    <th>Quantidade</th>
+                    <th>Valor total</th>
+                    <th>Tipo de Compra</th>
+                    <th>Parcelas</th>
+                    <th>*</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($vendas as $venda)
+                    <tr>
+                        <td>{{ $venda->getId() }}</td>
+                        <td>{{ $venda->getCliente() }}</td>
+                        <td>{{ $venda->getFuncionario() }}</td>
+                        <td>{{ $venda->getProduto() }}</td>
+                        <td>{{ $venda->getQuantidadeProduto() }}</td>
+                        <td>R$ {{ number_format($venda->getValor(), 2, ',', '.') }}</td>
+                        <td>{{ $venda->getStringTipoCompra() }}</td>
+                        <td>{{ $venda->getQuantidadeParcelas() }}</td>
+                        <td>
+                            <button class="btn btn-primary"><a style="color: white; text-decoration: none;" href="/vendas/editar/{{ $venda->getId() }}">Editar</a></button>
+                            <button class="btn btn-danger"><a style="color: white; text-decoration: none;" href="/vendas/excluir/{{ $venda->getId() }}">Excluir</a></button>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@include_layout('footer')

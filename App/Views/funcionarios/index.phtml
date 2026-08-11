@@ -1,0 +1,45 @@
+@include_layout('header')
+
+
+<div class="container">
+    <!-- Cabeçalho -->
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">Funcionários</h1>
+        <div class="btn-toolbar mb-2 mb-md-0 gap-3">
+            <a class="btn btn-success" href="/funcionarios/criar">Adicionar Funcionário</a>
+            <a href="/" class="btn btn-outline-secondary">Voltar</a>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Id.:</th>
+                    <th>Nome</th>
+                    <th>Idade</th>
+                    <th>Cargo</th>
+                    <th>Sálario</th>
+                    <th>*</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($funcionarios as $funcionario)
+                    <tr>
+                        <td>{{ $funcionario->getId() }}</td>
+                        <td>{{ $funcionario->getNome() }}</td>
+                        <td>{{ $funcionario->getIdade() }}</td>
+                        <td>{{ $funcionario->getStringCargo() }}</td>
+                        <td>R$ {{ number_format($funcionario->getSalario(), 2, ',', '.') }}</td>
+                        <td>
+                            <button class="btn btn-primary"><a style="color: white; text-decoration: none;" href="/funcionarios/editar/{{ $funcionario->getId() }}">Editar</a></button>
+                            <button class="btn btn-danger"><a style="color: white; text-decoration: none;" href="/funcionarios/excluir/{{ $funcionario->getId() }}">Excluir</a></button>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@include_layout('footer')

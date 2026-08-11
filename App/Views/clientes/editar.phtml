@@ -1,0 +1,35 @@
+@include_layout('header')
+
+<div class="container">
+    <h1>Novo Cliente</h1>
+    <form action="/clientes/update/{{ $cliente->getId() }}" method="post">
+        <div class="mb-3">
+            <label for="nome" class="form-label">Nome</label>
+            <input type="text" class="form-control" id="nome" name="nome" value="{{ $cliente->getNome() }}">
+        </div>
+        <div class="mb-3">
+            <label for="idade" class="form-label">Idade</label>
+            <input type="number" class="form-control" id="idade" name="idade" value="{{ $cliente->getIdade() }}">
+        </div>
+        <div class="mb-3">
+            <label for="nivel" class="form-label">Nivel</label>
+            <select name="nivel" id="nivel" class="form-control">
+                @foreach ($niveis as $nivel)
+                   <option
+                        @if ( $cliente->getStringNivel() == $nivel )
+                            selected
+                        @endif
+                        value="{{ $nivel }}"
+                        >{{ $nivel }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="dinheiro" class="form-label">Dinheiro</label>
+            <input type="text" class="form-control" id="dinheiro" name="dinheiro" value="{{ $cliente->getDinheiro() }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+</div>
+
+@include_layout('footer')
