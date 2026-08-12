@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Auxilios\Render;
+use App\Auxilios\ControllerBase;
 use App\Auxilios\Request;
 use App\Auxilios\Session;
 use App\Classes\Cliente;
@@ -12,19 +12,19 @@ use App\Classes\Venda;
 use App\DTOs\VendasStoreRequest;
 use App\Enums\TipoCompra;
 
-class VendasController
+class VendasController extends ControllerBase
 {
 
     public function index()
     {
-        render('vendas/index', [
+        self::render('vendas/index', [
             'vendas' => Venda::buscarTodos()
         ]);
     }
 
     public function create()
     {
-        render('vendas/create', [
+        self::render('vendas/create', [
             'clientes' => Cliente::buscarTodos(),
             'funcionarios' => Funcionario::buscarTodos(),
             'produtos' => Produto::buscarTodos(),
@@ -38,10 +38,10 @@ class VendasController
         $venda = (new VendasStoreRequest(...$request->all()))->getVenda();
         if ($venda != false) {
             if ($venda->salvar()) {
-                Render::toast("Venda salva com sucesso", "success");
+                self::toast("Venda salva com sucesso", "success");
                 redirect("vendas", false);
             } else {
-                Render::toast("Erro ao salvar venda", "error");
+                self::toast("Erro ao salvar venda", "error");
                 redirect("vendas/criar", true);
             }
         } else {
@@ -51,7 +51,7 @@ class VendasController
 
     public function edit(string $id) 
     {
-        render('vendas/edit');
+        self::render('vendas/edit');
     }
 
     public function update(string $id, Request $request) 
@@ -61,7 +61,7 @@ class VendasController
 
     public function delete(string $id) 
     {
-        render('vendas/delete');
+        self::render('vendas/delete');
     }
 
 }

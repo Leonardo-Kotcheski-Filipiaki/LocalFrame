@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Auxilios\Render;
+use App\Auxilios\ControllerBase;
 use App\Auxilios\Request;
 use App\Auxilios\Session;
 use App\Classes\Funcionario;
@@ -10,11 +10,11 @@ use App\DTOs\FuncionarioStoreRequest;
 use App\DTOs\FuncionarioUpdateRequest;
 use App\Enums\Cargo;
 
-class FuncionariosController
+class FuncionariosController extends ControllerBase
 {
     public function index()
     {
-        render("funcionarios/index",
+        self::render("funcionarios/index",
         [
             'funcionarios' => Funcionario::buscarTodos()
         ]);
@@ -22,7 +22,7 @@ class FuncionariosController
 
     public function create()
     {
-        render("funcionarios/create",[
+        self::render("funcionarios/create",[
             'cargos' => Cargo::getCargos(),
             'dados' => Session::oldFormData()
         ]);
@@ -32,14 +32,14 @@ class FuncionariosController
     {
         $funcionario = (new FuncionarioStoreRequest(...$request->all()))->getFuncionario();
         if ($funcionario == false) {
-            Render::erro("Erro ao validar dados");
+            self::erro("Erro ao validar dados");
             redirect("funcionarios/criar", true);
         } 
         if ($funcionario->salvar()) {
-            Render::toast("Funcionario salvo com sucesso", "success");
+            self::toast("Funcionario salvo com sucesso", "success");
             redirect("funcionarios", false);
         } else {
-            Render::erro("Erro ao salvar funcionario");
+            self::erro("Erro ao salvar funcionario");
             redirect("funcionarios/criar", true);
         }
     }
@@ -48,10 +48,10 @@ class FuncionariosController
     {
         $funcionario = Funcionario::buscar($id);
         if (!$funcionario) {
-            Render::erro("Funcionario não encontrado", null, 404);
+            self::erro("Funcionario não encontrado", null, 404);
             redirect("funcionarios", false);
         }
-        render("funcionarios/editar",[
+        self::render("funcionarios/editar",[
             'funcionario' => $funcionario,
             'cargos' => Cargo::getCargos(),
             'dados' => Session::oldFormData()
@@ -62,19 +62,19 @@ class FuncionariosController
     {
         $funcionario = Funcionario::buscar($id);
         if (!$funcionario) {
-            Render::erro("Funcionario não encontrado", null, 404);
+            self::erro("Funcionario não encontrado", null, 404);
             redirect("/funcionarios", false);
         }
         $funcionario = (new FuncionarioUpdateRequest($id, ...$request->all()))->getFuncionario();
         if ($funcionario == false) {
-            Render::erro("Erro ao validar dados");
+            self::erro("Erro ao validar dados");
             redirect("/funcionarios/editar/" . $id, true);
         } 
         if ($funcionario->salvar()) {
-            Render::toast("Funcionario salvo com sucesso", "success");
+            self::toast("Funcionario salvo com sucesso", "success");
             redirect("/funcionarios", false);
         } else {
-            Render::erro("Erro ao salvar funcionario");
+            self::erro("Erro ao salvar funcionario");
             redirect("/funcionarios/editar/" . $id, true);
         }
     }
@@ -83,14 +83,14 @@ class FuncionariosController
     {
         $funcionario = Funcionario::buscar($id);
         if (!$funcionario) {
-            Render::erro("Funcionario não encontrado", null, 404);
+            self::erro("Funcionario não encontrado", null, 404);
             redirect("/funcionarios", false);
         }
         if ($funcionario->remover()) {
-            Render::toast("Funcionario removido com sucesso", "success");
+            self::toast("Funcionario removido com sucesso", "success");
             redirect("/funcionarios", false);
         } else {
-            Render::erro("Erro ao remover funcionario");
+            self::erro("Erro ao remover funcionario");
             redirect("/funcionarios", false);
         }
     }

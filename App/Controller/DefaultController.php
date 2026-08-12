@@ -2,11 +2,12 @@
 
 namespace App\Controller;
 
+use App\Auxilios\ControllerBase;
 
-class DefaultController 
+class DefaultController extends ControllerBase
 {
     public function index()
     {
-        render("index");
+        self::render("index");
     }
 }

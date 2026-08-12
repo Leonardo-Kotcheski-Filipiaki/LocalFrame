@@ -7,30 +7,10 @@
  * @description Funções auxiliares do sistema
  */
 
-use App\Auxilios\Render;
-use App\Auxilios\Repository;
 use App\Auxilios\Session;
 
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
-}
-
-if (!function_exists('repo')) {
-    function repo(): Repository
-    {
-        static $repository = null;
-        if ($repository === null) {
-            $repository = new Repository();
-        }
-        return $repository;
-    }
-}
-
-if (!function_exists('render')) {
-    function render(string $arquivo, array $dados = [])
-    {
-        Render::render($arquivo, $dados);
-    }
 }
 
 if (!function_exists("validarVazio")) {

@@ -4,9 +4,17 @@ namespace App\Auxilios;
 
 abstract class ClasseBase 
 {
+    protected static function repo(): Repository
+    {
+        static $repository = null;
+        if ($repository === null) {
+            $repository = new Repository();
+        }
+        return $repository;
+    }
     public function salvar(): bool
     {
-        return repo()->atualizarLista($this);
+        return $this->repo()->atualizarLista($this);
     }
 
     public function remover(?string $id = null): bool
@@ -14,16 +22,16 @@ abstract class ClasseBase
         $idRemover = $id ?? ($this->id ?? null);
         if (!$idRemover) return false;
 
-        return repo()->removerPorId($idRemover, static::class);
+        return static::repo()->removerPorId($idRemover, static::class);
     }
 
     public static function buscar(string $id): ?static
     {
-        return repo()->buscarPorId($id, static::class);
+        return static::repo()->buscarPorId($id, static::class);
     }
 
     public static function buscarTodos(): array
     {
-        return repo()->obterLista(static::class);
+        return static::repo()->obterLista(static::class);
     }
 }

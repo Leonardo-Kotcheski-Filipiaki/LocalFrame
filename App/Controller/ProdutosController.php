@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Auxilios\Render;
+use App\Auxilios\ControllerBase;
 use App\Auxilios\Request;
 use App\Auxilios\Session;
 use App\Classes\Produto;
@@ -10,18 +10,18 @@ use App\DTOs\ProdutoStoreRequest;
 use App\DTOs\ProdutoUpdateRequest;
 use App\Enums\TipoProduto;
 
-class ProdutosController
+class ProdutosController extends ControllerBase
 {
     public function index() 
     {
-        render("produtos/index",[
+        self::render("produtos/index",[
             "produtos" => Produto::buscarTodos()
         ]);
     }
 
     public function create() 
     {
-        render("produtos/create", [
+        self::render("produtos/create", [
             "tiposProdutos" => TipoProduto::getStringTipoProdutos(),
             "dados" => Session::oldFormData() ?? []
         ]);
@@ -32,10 +32,10 @@ class ProdutosController
         $produto = (new ProdutoStoreRequest(...$request->all()))->getProduto();
         if ($produto != false) {
             if ($produto->salvar()) {
-                Render::toast("Produto salvo com sucesso", "success");
+                self::toast("Produto salvo com sucesso", "success");
                 redirect("produtos", false);
             } else {
-                Render::toast("Erro ao salvar produto", "error");
+                self::toast("Erro ao salvar produto", "error");
                 redirect("produtos/criar", true);
             }
         } else {
@@ -45,7 +45,7 @@ class ProdutosController
 
     public function edit(string $id) 
     {
-        render('produtos/edit', [
+        self::render('produtos/edit', [
             "dados" => Session::oldFormData(),
             "produto" => Produto::buscar($id),
             "tiposProdutos" => TipoProduto::getStringTipoProdutos()
@@ -56,20 +56,20 @@ class ProdutosController
     {
         $produto = Produto::buscar($id);
         if (!$produto) {
-            Render::erro("Produto não encontrado", null, 404);
+            self::erro("Produto não encontrado", null, 404);
             redirect("/produtos", false);
         }
         $produto = (new ProdutoUpdateRequest($id, ...$request->all()))->getProduto();
         if ($produto == false) {
-            Render::erro("Erro ao validar dados");
+            self::erro("Erro ao validar dados");
             redirect("/produtos/editar/" . $id, true);
         } 
 
         if ($produto->salvar()) {
-            Render::toast("Produto salvo com sucesso", "success");
+            self::toast("Produto salvo com sucesso", "success");
             redirect("/produtos", false);
         } else {
-            Render::erro("Erro ao salvar produto");
+            self::erro("Erro ao salvar produto");
             redirect("/produtos/editar/" . $id, true);
         }
         
@@ -79,14 +79,14 @@ class ProdutosController
     {
         $produto = Produto::buscar($id);
         if (!$produto) {
-            Render::erro("Produto não encontrado", null, 404);
+            self::erro("Produto não encontrado", null, 404);
             redirect("/produtos", false);
         }
 
         if ($produto->remover()) {
-            Render::toast("Produto removido com sucesso", "success");
+            self::toast("Produto removido com sucesso", "success");
         } else {
-            Render::erro("Erro ao remover produto");
+            self::erro("Erro ao remover produto");
         }
         redirect("/produtos", false);
     }

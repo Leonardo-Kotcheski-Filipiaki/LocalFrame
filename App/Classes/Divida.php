@@ -2,13 +2,14 @@
 
 namespace App\Classes;
 
+use App\Auxilios\ClasseBase;
 use App\Enums\TipoCompra;
 use App\Auxilios\Render;
 
 /**
  * Esta classe deve ser vinculada apenas no array duvidas da classe Cliente
  */
-class Divida
+class Divida extends ClasseBase
 {
 
     private string $id;
@@ -94,8 +95,4 @@ class Divida
         return $this->paga;
     }
 
-    public function salvar() : bool
-    {
-        return repo()->atualizarLista($this);
-    }
 }

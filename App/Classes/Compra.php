@@ -2,9 +2,10 @@
 
 namespace App\Classes;
 
+use App\Auxilios\ClasseBase;
 use App\Enums\TipoCompra;
 
-class Compra 
+class Compra extends ClasseBase
 {
     private string $id;
 
@@ -55,8 +56,4 @@ class Compra
         return $this->idVendedor;
     }
 
-    public function salvar() : bool {
-        var_dump($this);
-        return repo()->atualizarLista($this); 
-    }
 }
