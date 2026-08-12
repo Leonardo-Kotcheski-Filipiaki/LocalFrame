@@ -31,15 +31,15 @@ class FuncionariosController
     public function store(Request $request)
     {
         $funcionario = (new FuncionarioStoreRequest(...$request->all()))->getFuncionario();
-        if ($funcionario != false) {
-            if ($funcionario->salvar()) {
-                Render::toast("Funcionario salvo com sucesso", "success");
-                redirect("funcionarios", false);
-            } else {
-                Render::toast("Erro ao salvar funcionario", "error");
-                redirect("funcionarios/criar", true);
-            }
+        if ($funcionario == false) {
+            Render::erro("Erro ao validar dados");
+            redirect("funcionarios/criar", true);
+        } 
+        if ($funcionario->salvar()) {
+            Render::toast("Funcionario salvo com sucesso", "success");
+            redirect("funcionarios", false);
         } else {
+            Render::erro("Erro ao salvar funcionario");
             redirect("funcionarios/criar", true);
         }
     }
@@ -48,7 +48,7 @@ class FuncionariosController
     {
         $funcionario = Funcionario::buscar($id);
         if (!$funcionario) {
-            Render::toast("Funcionario não encontrado", "error");
+            Render::erro("Funcionario não encontrado", null, 404);
             redirect("funcionarios", false);
         }
         render("funcionarios/editar",[
@@ -62,19 +62,19 @@ class FuncionariosController
     {
         $funcionario = Funcionario::buscar($id);
         if (!$funcionario) {
-            Render::toast("Funcionario não encontrado", "error");
+            Render::erro("Funcionario não encontrado", null, 404);
             redirect("/funcionarios", false);
         }
         $funcionario = (new FuncionarioUpdateRequest($id, ...$request->all()))->getFuncionario();
-        if ($funcionario != false) {
-            if ($funcionario->salvar()) {
-                Render::toast("Funcionario salvo com sucesso", "success");
-                redirect("/funcionarios", false);
-            } else {
-                Render::toast("Erro ao salvar funcionario", "error");
-                redirect("/funcionarios/editar/" . $id, true);
-            }
+        if ($funcionario == false) {
+            Render::erro("Erro ao validar dados");
+            redirect("/funcionarios/editar/" . $id, true);
+        } 
+        if ($funcionario->salvar()) {
+            Render::toast("Funcionario salvo com sucesso", "success");
+            redirect("/funcionarios", false);
         } else {
+            Render::erro("Erro ao salvar funcionario");
             redirect("/funcionarios/editar/" . $id, true);
         }
     }
@@ -83,14 +83,14 @@ class FuncionariosController
     {
         $funcionario = Funcionario::buscar($id);
         if (!$funcionario) {
-            Render::toast("Funcionario não encontrado", "error");
+            Render::erro("Funcionario não encontrado", null, 404);
             redirect("/funcionarios", false);
         }
         if ($funcionario->remover()) {
             Render::toast("Funcionario removido com sucesso", "success");
             redirect("/funcionarios", false);
         } else {
-            Render::toast("Erro ao remover funcionario", "error");
+            Render::erro("Erro ao remover funcionario");
             redirect("/funcionarios", false);
         }
     }

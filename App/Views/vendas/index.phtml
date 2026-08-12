@@ -35,7 +35,7 @@
                         <td>{{ $venda->getProduto() }}</td>
                         <td>{{ $venda->getQuantidadeProduto() }}</td>
                         <td>R$ {{ number_format($venda->getValor(), 2, ',', '.') }}</td>
-                        <td>{{ $venda->getStringTipoCompra() }}</td>
+                        <td>{{ $venda->getTipoCompra() }}</td>
                         <td>{{ $venda->getQuantidadeParcelas() }}</td>
                         <td>
                             <button class="btn btn-primary"><a style="color: white; text-decoration: none;" href="/vendas/editar/{{ $venda->getId() }}">Editar</a></button>

@@ -2,7 +2,9 @@
 
 namespace App\Classes;
 
-class Pessoa
+use App\Auxilios\ClasseBase;
+
+class Pessoa extends ClasseBase
 {
 
     protected ?string $id = null;

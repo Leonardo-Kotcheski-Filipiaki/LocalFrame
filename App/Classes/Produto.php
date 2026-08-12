@@ -2,11 +2,12 @@
 
 namespace App\Classes;
 
+use App\Auxilios\ClasseBase;
 use App\Enums\TipoProduto;
 
-class Produto
+class Produto extends ClasseBase
 {
-    private string $id;
+    protected string $id;
 
     private string $produto;
 
@@ -60,23 +61,5 @@ class Produto
     public function getValor() : float
     {
         return $this->valor;
-    }
-
-    public static function buscarTodos() : array
-    {
-        return repo()->getListaProduto();
-    }
-
-    public function salvar() : bool {
-        return repo()->atualizarLista($this);
-    }
-
-    public static function buscar(string $id) : self | null {
-        return repo()->buscarPorId($id, self::class);
-    }
-
-    public function remover(string|null $id = null) : bool {
-        if (!$id) $id = $this->id;
-        return repo()->removerPorId($id, self::class);
     }
 }

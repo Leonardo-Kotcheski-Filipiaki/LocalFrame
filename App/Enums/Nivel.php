@@ -18,6 +18,11 @@ enum Nivel : string
                 Nivel::BLACK->value => 10000.00
             )[$this->value];
     }
+    
+    public static function getNiveis() : array
+    {
+        return self::cases();
+    }
 
     public static function getStringNiveis() : array
     {

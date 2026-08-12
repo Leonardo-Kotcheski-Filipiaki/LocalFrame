@@ -2,24 +2,12 @@
 
 namespace App\Auxilios;
 
-use App\Classes\Cliente;
-use App\Classes\Compra;
-use App\Classes\Divida;
-use App\Classes\Funcionario;
-use App\Classes\Produto;
-use App\Classes\Venda;
-use App\Enums\Nivel;
 use ReflectionClass;
 use ReflectionNamedType;
 
 class Repository
 {
-    private array $listaClientes = [];
-    private array $listaFuncionario = [];
-    private array $listaProduto = [];
-    private array $listaVendas = [];
-    private array $listaNiveis;
-
+    private array $lista = [];
     private string $diretorio;
     private string $delimitador = ';';
 
@@ -27,15 +15,9 @@ class Repository
     {
         $this->diretorio = rtrim($diretorioStorage, '/') . '/';
         $this->garantirDiretorio();
-
-        $this->listaNiveis = Nivel::getStringNiveis();
-
-        $this->listaClientes = $this->carregarDoArquivo(Cliente::class);
-        $this->listaFuncionario = $this->carregarDoArquivo(Funcionario::class);
-        $this->listaProduto = $this->carregarDoArquivo(Produto::class);
     }
 
-    public function atualizarLista(Cliente|Funcionario|Produto|Venda|Divida|Compra $classe): bool
+    public function atualizarLista(ClasseBase $classe): bool
     {
         try {
             $classeFqcn = $classe::class;
@@ -62,36 +44,15 @@ class Repository
         }
     }
 
-    public function getListaClientes(): array
+    public function obterLista(string $classeFqcn): array
     {
-        return $this->listaClientes;
+        return $this->obterReferenciaLista($classeFqcn);
     }
-
-    public function getListaFuncionario(): array
-    {
-        return $this->listaFuncionario;
-    }
-
-    public function getListaProduto(): array
-    {
-        return $this->listaProduto;
-    }
-
-    public function getListaNiveis(): array
-    {
-        return $this->listaNiveis;
-    }
-
-    public function getListaVendas(): array
-    {
-        return $this->listaVendas;
-    }
-
     private function salvarEmArquivo(string $classeFqcn, array $lista): void
     {
         $caminhoArquivo = $this->getCaminhoArquivo($classeFqcn);
         $reflection = new ReflectionClass($classeFqcn);
-        $propriedades = $reflection->getProperties();
+        $propriedades = $this->filtrarPropriedadesPersistiveis($reflection->getProperties());
 
         $linhas = [];
 
@@ -109,10 +70,19 @@ class Repository
 
                 if (method_exists($objeto, $metodoGetter)) {
                     $valor = $objeto->$metodoGetter();
-                } elseif ($propriedade->isInitialized($objeto)) {
-                    $valor = $propriedade->getValue($objeto);
+                } else {
+                    $classeDeclarante = $propriedade->getDeclaringClass()->getName();
+                    if ($objeto instanceof $classeDeclarante && $propriedade->isInitialized($objeto)) {
+                        $valor = $propriedade->getValue($objeto);
+                    }
                 }
 
+                if ($valor instanceof \BackedEnum) {
+                    $valor = $valor->value;
+                } elseif ($valor instanceof \UnitEnum) {
+                    $valor = $valor->name;
+                }
+                
                 $valores[] = $this->formatarValorParaTxt($valor);
             }
             $linhas[] = implode($this->delimitador, $valores);
@@ -341,6 +311,18 @@ class Repository
         return $propriedades;
     }
 
+    /**
+     * Filtra propriedades removendo as marcadas com #[Ignorar].
+     * @param \ReflectionProperty[] $propriedades
+     * @return \ReflectionProperty[]
+     */
+    private function filtrarPropriedadesPersistiveis(array $propriedades): array
+    {
+        return array_values(array_filter($propriedades, function (\ReflectionProperty $p) {
+            return empty($p->getAttributes(Ignorar::class));
+        }));
+    }
+
     private function converterValorDoTxt(?string $valor, ?\ReflectionType $tipo): mixed
     {
         $permiteNulo = $tipo ? $tipo->allowsNull() : true;
@@ -413,14 +395,10 @@ class Repository
 
     private function &obterReferenciaLista(string $classeFqcn): array
     {
-        switch ($classeFqcn) {
-            case Cliente::class:
-                return $this->listaClientes;
-            case Funcionario::class:
-                return $this->listaFuncionario;
-            default:
-                return $this->listaProduto;
+        if (!array_key_exists($classeFqcn, $this->lista)) {
+            $this->lista[$classeFqcn] = $this->carregarDoArquivo($classeFqcn);
         }
+        return $this->lista[$classeFqcn];
     }
 
     private function getCaminhoArquivo(string $classeFqcn): string

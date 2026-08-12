@@ -56,34 +56,37 @@ class ProdutosController
     {
         $produto = Produto::buscar($id);
         if (!$produto) {
-            Render::toast("Produto não encontrado", "error");
+            Render::erro("Produto não encontrado", null, 404);
             redirect("/produtos", false);
         }
         $produto = (new ProdutoUpdateRequest($id, ...$request->all()))->getProduto();
-        if ($produto != false) {
-            if ($produto->salvar()) {
-                Render::toast("Produto salvo com sucesso", "success");
-                redirect("/produtos", false);
-            } else {
-                Render::toast("Erro ao salvar produto", "error");
-                redirect("/produtos/editar/" . $id, true);
-            }
+        if ($produto == false) {
+            Render::erro("Erro ao validar dados");
+            redirect("/produtos/editar/" . $id, true);
+        } 
+
+        if ($produto->salvar()) {
+            Render::toast("Produto salvo com sucesso", "success");
+            redirect("/produtos", false);
         } else {
+            Render::erro("Erro ao salvar produto");
             redirect("/produtos/editar/" . $id, true);
         }
+        
     }
 
-    public function delete(string $id) {
+    public function delete(string $id) 
+    {
         $produto = Produto::buscar($id);
         if (!$produto) {
-            Render::toast("Produto não encontrado", "error");
+            Render::erro("Produto não encontrado", null, 404);
             redirect("/produtos", false);
         }
 
         if ($produto->remover()) {
             Render::toast("Produto removido com sucesso", "success");
         } else {
-            Render::toast("Erro ao remover produto", "error");
+            Render::erro("Erro ao remover produto");
         }
         redirect("/produtos", false);
     }

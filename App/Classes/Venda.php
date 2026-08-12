@@ -2,13 +2,14 @@
 
 namespace App\Classes;
 
-use App\Enums\Cargo;
+use App\Auxilios\ClasseBase;
 use App\Enums\TipoCompra;
-use App\Auxilios\Render;
+use App\Auxilios\Ignorar;
+use Override;
 
-class Venda
+class Venda extends ClasseBase
 {
-    private string $id;
+    protected string $id;
 
     private string $idCliente;
 
@@ -20,9 +21,11 @@ class Venda
      * Tipo de compras válidos para cadastrar dívida
      * @var TipoCompra[];
      */
+    #[Ignorar]
     private array $tiposCompraValidosParaDivida = array(TipoCompra::C,
                                                         TipoCompra::CR);
 
+    #[Ignorar]
     private string|bool|null $retornoDivida = null;
 
     private string $tipoCompra;
@@ -31,44 +34,64 @@ class Venda
 
     private int $quantidadeProduto;
 
-    public function __construct(string $idCliente, string $idFuncionario, string $idProduto, string $tipoCompra, int|null $quantidadeParcelas = null, int $quantidadeProduto) {
+    public function __construct(string $idCliente, string $idFuncionario, string $idProduto, string $tipoCompra, int|null $quantidadeParcelas = null, int $quantidadeProduto, string|null $id = null) {
         $this->idCliente = $idCliente;
         $this->idFuncionario = $idFuncionario;
         $this->idProduto = $idProduto;
         $this->tipoCompra = $tipoCompra;
         $this->quantidadeParcelas = $quantidadeParcelas;
         $this->quantidadeProduto = $quantidadeProduto;
+        $this->id = $id ?? uniqid();
     }
 
-    public function salvar()
+    public function getId(): string
     {
-        $okCompra = (new Compra(TipoCompra::from($this->tipoCompra), $this->idProduto, $this->quantidadeProduto, $this->idFuncionario))->salvar();
-        if ($okCompra) {
-            if (in_array(TipoCompra::from($this->tipoCompra), $this->tiposCompraValidosParaDivida)) {
-                $okDivida = (new Divida(TipoCompra::from($this->tipoCompra), $this->idCliente, $this->idProduto, $this->quantidadeProduto, $this->idFuncionario))->salvar();
-                if ($okDivida) {
-                    return repo()->atualizarLista($this);
-                } else {
-                    return false;
-                }
-            } else {
-                return repo()->atualizarLista($this);
-            }
-        } else {
-            return false;
-        }
+        return $this->id;
     }
 
-    public static function buscarTodos() : array
+    #[Override]
+    public static function buscarTodos(): array
     {
-        $vendas = repo()->getListaVendas();
+        $vendas = parent::buscarTodos();
         foreach ($vendas as &$venda) {
-            $venda['cliente'] = Cliente::buscar($venda['idCliente'])->getNome();
-            $venda['funcionario'] = Funcionario::buscar($venda['idFuncionario'])->getNome();
-            $venda['produto'] = Produto::buscar($venda['idProduto'])->getProduto();
-            $venda['valorTotal'] = Produto::buscar($venda['idProduto'])->getValor() * $venda['quantidadeProduto'];
+            $venda->cliente = Cliente::buscar($venda->idCliente)->getNome();
+            $venda->funcionario = Funcionario::buscar($venda->idFuncionario)->getNome();
+            $venda->produto = Produto::buscar($venda->idProduto)->getProduto();
         }
         return $vendas;
+    }
+
+    //Getters
+
+    public function getCliente() : string {
+        return $this->cliente;
+    }
+
+    public function getFuncionario() : string {
+        return $this->funcionario;
+    }
+
+    public function getProduto() : string {
+        return $this->produto;
+    }
+
+    public function getTipoCompra() : string {
+        return $this->tipoCompra;
+    }
+
+    public function getQuantidadeParcelas(): int|null
+    {
+        return $this->quantidadeParcelas ?? null;
+    }
+
+    public function getQuantidadeProduto() : int 
+    {
+        return $this->quantidadeProduto;
+    }
+
+    public function getValor(): float 
+    {
+        return Produto::buscar($this->idProduto)->getValor() * $this->getQuantidadeProduto();
     }
 
 }

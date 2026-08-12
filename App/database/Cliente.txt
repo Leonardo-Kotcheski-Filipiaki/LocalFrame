@@ -1,4 +1,2 @@
 nivel;dinheiro;id;nome;idade
-Ouro;8540;6a7a1181209b5;Selmar Filipiaki;56
-Bronze;40;6a7a118b76961;Leonardo Kotcheski Filipiaki;21
-Ouro;2700;6a7a11adf39bc;Katryn Suelen Oliveira dos Santos;23
+Ouro;80;6a7ca339e3c32;Leonardo;21

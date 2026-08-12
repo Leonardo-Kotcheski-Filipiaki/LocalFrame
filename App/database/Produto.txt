@@ -1,2 +1,2 @@
 id;produto;descricao;tipoProduto;quantidade;valor
-6a7a2cf964eb4;Geladeira Brastemp;Produto Bom;DECORAÇÕES;50;2999.99
+6a7ca599c2b77;Vaso de planta Verde Musgo Italiano;;DECORAÇÕES;80;55

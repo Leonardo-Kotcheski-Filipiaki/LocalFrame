@@ -8,6 +8,7 @@ use App\Auxilios\Session;
 use App\Classes\Cliente;
 use App\DTOs\ClienteStoreRequest;
 use App\DTOs\ClienteUpdateRequest;
+use App\Enums\Nivel;
 
 class ClientesController
 {
@@ -20,7 +21,7 @@ class ClientesController
     public function create()
     {
         render("clientes/create", [
-            'niveis' => repo()->getListaNiveis(),
+            'niveis' => Nivel::getStringNiveis(),
             'dados' => Session::oldFormData() ?? []
         ]);
     }
@@ -28,44 +29,45 @@ class ClientesController
     public function store(Request $request)
     {
         $cliente = (new ClienteStoreRequest(...$request->all()))->getCliente();
-        if ($cliente != false) {
-            if ($cliente->salvar()) {
-                Render::toast("Cliente salvo com sucesso", "success");
-                redirect("clientes", false);
-            } else {
-                Render::toast("Erro ao salvar cliente", "error");
-                redirect("clientes/criar", true);
-            }
-        } else {
+        if ($cliente == false) {
+            Render::erro("Erro ao salvar cliente", "error");
             redirect("clientes/criar", true);
         }
+        if ($cliente->salvar()) {
+            Render::toast("Cliente salvo com sucesso", "success");
+            redirect("clientes", false);
+        }
+        
+        redirect("clientes/criar", true);
+        
     }
 
     public function edit(string $id)
     {
         $cliente = Cliente::buscar($id);
         if ($cliente == false) {
-            Render::toast("Cliente não encontrado", "error");
+            Render::erro("Cliente não encontrado", null, 404);
             redirect("clientes", false);
         }
         
-        render('clientes/editar', ["cliente" => $cliente, 'niveis' => repo()->getListaNiveis()]);
+        render('clientes/editar', ["cliente" => $cliente, 'niveis' => Nivel::getStringNiveis()]);
     }
 
     public function update(Request $request, string $id)
     {
-        $cliente = (new ClienteUpdateRequest($id, ...$request->all())->getCliente());
-        if ($cliente != false) {
-            if ($cliente->salvar()) {
-                Render::toast("Cliente atualizado com sucesso", "success");
-                redirect("/clientes", false);
-            } else {
-                Render::toast("Erro ao atualizar cliente", "error");
-                redirect("/clientes/editar/$id", true);
-            }
-        } else {
+        $cliente = (new ClienteUpdateRequest($id, ...$request->all()))->getCliente();
+        if ($cliente == false) {
+            Render::erro("Erro ao atualizar cliente", null, 404);
             redirect("/clientes/editar/$id", true);
         }
+        if ($cliente->salvar()) {
+            Render::toast("Cliente atualizado com sucesso", "success");
+            redirect("/clientes", false);
+        }
+        
+        Render::erro("Erro ao atualizar cliente");
+        redirect("/clientes/editar/$id", true);
+        
 
     }
 
@@ -73,7 +75,7 @@ class ClientesController
     {
         $cliente = Cliente::buscar($id);
         if ($cliente == false) {
-            Render::toast("Cliente não encontrado", "error");
+            Render::erro("Cliente não encontrado", null, 404);
             redirect("clientes", false);
         }
 
@@ -81,7 +83,7 @@ class ClientesController
             Render::toast("Cliente excluído com sucesso", "success");
             redirect('/clientes', false);
         } else {
-            Render::toast("Erro ao excluir cliente", "error");
+            Render::erro("Erro ao excluir cliente");
             redirect('/clientes', true);
         }
 

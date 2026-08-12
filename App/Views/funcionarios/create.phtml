@@ -14,6 +14,7 @@
         <div class="mb-3">
             <label for="cargo" class="form-label">Cargo</label>
             <select name="cargo" id="cargo" class="form-control">
+                <option value="">Selecione um cargo</option>
                 @foreach ($cargos as $cargo)
                     <option value="{{ $cargo }}" {{ $dados['cargo'] == $cargo ? 'selected' : '' }}>{{ $cargo }}</option>
                 @endforeach

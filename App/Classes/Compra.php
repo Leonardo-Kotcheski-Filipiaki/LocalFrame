@@ -56,6 +56,7 @@ class Compra
     }
 
     public function salvar() : bool {
+        var_dump($this);
         return repo()->atualizarLista($this); 
     }
 }

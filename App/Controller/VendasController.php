@@ -12,16 +12,18 @@ use App\Classes\Venda;
 use App\DTOs\VendasStoreRequest;
 use App\Enums\TipoCompra;
 
-class VendasController {
+class VendasController
+{
 
-    public function index() {
-        
+    public function index()
+    {
         render('vendas/index', [
             'vendas' => Venda::buscarTodos()
         ]);
     }
 
-    public function create() {
+    public function create()
+    {
         render('vendas/create', [
             'clientes' => Cliente::buscarTodos(),
             'funcionarios' => Funcionario::buscarTodos(),
@@ -31,7 +33,8 @@ class VendasController {
         ]);
     }
 
-    public function store(Request $request) {
+    public function store(Request $request) 
+    {
         $venda = (new VendasStoreRequest(...$request->all()))->getVenda();
         if ($venda != false) {
             if ($venda->salvar()) {
@@ -46,15 +49,18 @@ class VendasController {
         }
     }
 
-    public function edit(string $id) {
+    public function edit(string $id) 
+    {
         render('vendas/edit');
     }
 
-    public function update(string $id, Request $request) {
+    public function update(string $id, Request $request) 
+    {
 
     }
 
-    public function delete(string $id) {
+    public function delete(string $id) 
+    {
         render('vendas/delete');
     }
 
