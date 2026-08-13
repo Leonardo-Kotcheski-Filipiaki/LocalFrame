@@ -1,4 +1,4 @@
-# 🚀 A Local Frame
+# 🚀 LocalFrame
 
 > Um framework PHP minimalista e em construção, criado do zero para explorar o potencial do **PHP 8.4 puro**.
 
@@ -7,7 +7,7 @@
 
 ## 📌 Sobre o Projeto
 
-O **A Local Frame** é um laboratório de desenvolvimento criado por mim O objetivo principal deste projeto é testar e aprofundar conhecimentos sobre a arquitetura interna de um framework web, utilizando apenas **PHP 8.4 nativo**, sem dependências de frameworks terceiros.
+O **LocalFrame** é um laboratório de desenvolvimento criado por mim com o objetivo principal de testar e aprofundar conhecimentos sobre a arquitetura interna de um framework web, utilizando apenas **PHP 8.4 nativo**, sem dependências de frameworks terceiros, tendo de criar funcionalidades do zero, fazendo uso também do apoio de IA (Gemini)
 
 Atualmente, o projeto executa de forma 100% local e serve como base para o estudo de roteamento, fluxo de requisição/resposta e abstrações da linguagem.
 
