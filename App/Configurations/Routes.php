@@ -1,6 +1,7 @@
 <?php
 
-use App\Auxilios\Router;
+use App\Auxilios\Essentials\Router;
+
 Router::get('/', "DefaultController@index");
 //Clientes
 Router::get('/clientes', 'ClientesController@index');
@@ -30,6 +31,7 @@ Router::get('/produtos/excluir/{id}', "ProdutosController@delete");
 Router::get("/vendas", "VendasController@index");
 Router::get("/vendas/criar", "VendasController@create");
 Router::post("/vendas", "VendasController@store");
+Router::get("/vendas/excluir/{id}", "VendasController@delete");
 
 Router::dispatch($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
 

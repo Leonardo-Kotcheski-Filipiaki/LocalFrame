@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Auxilios\ControllerBase;
+use App\Auxilios\Bases\ControllerBase;
 
 class DefaultController extends ControllerBase
 {

@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
-use App\Auxilios\ControllerBase;
-use App\Auxilios\Request;
-use App\Auxilios\Session;
+use App\Auxilios\Bases\ControllerBase;
+use App\Auxilios\Essentials\Request;
+use App\Auxilios\Essentials\Session;
 use App\Classes\Cliente;
 use App\DTOs\ClienteStoreRequest;
 use App\DTOs\ClienteUpdateRequest;
@@ -30,7 +30,6 @@ class ClientesController extends ControllerBase
     {
         $cliente = (new ClienteStoreRequest(...$request->all()))->getCliente();
         if ($cliente == false) {
-            self::erro("Erro ao salvar cliente", "error");
             redirect("clientes/criar", true);
         }
         if ($cliente->salvar()) {
@@ -57,7 +56,6 @@ class ClientesController extends ControllerBase
     {
         $cliente = (new ClienteUpdateRequest($id, ...$request->all()))->getCliente();
         if ($cliente == false) {
-            self::erro("Erro ao atualizar cliente", null, 404);
             redirect("/clientes/editar/$id", true);
         }
         if ($cliente->salvar()) {

@@ -2,9 +2,9 @@
 
 namespace App\Classes;
 
-use App\Auxilios\ClasseBase;
+use App\Auxilios\Bases\ClasseBase;
 use App\Enums\TipoCompra;
-use App\Auxilios\Render;
+use App\Auxilios\Essentials\Render;
 
 /**
  * Esta classe deve ser vinculada apenas no array duvidas da classe Cliente

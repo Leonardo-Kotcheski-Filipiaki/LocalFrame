@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Auxilios;
+namespace App\Auxilios\Essentials;
 
-use App\Auxilios\Request;
+use App\Auxilios\Essentials\Request;
 
 class Router
 {

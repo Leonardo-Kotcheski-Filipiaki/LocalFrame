@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Auxilios;
+namespace App\Auxilios\Bases;
 
-abstract class ClasseBase 
+use App\Auxilios\Repository;
+
+abstract class ClasseBase
 {
     protected static function repo(): Repository
     {

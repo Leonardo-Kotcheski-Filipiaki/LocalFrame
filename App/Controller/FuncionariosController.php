@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
-use App\Auxilios\ControllerBase;
-use App\Auxilios\Request;
-use App\Auxilios\Session;
+use App\Auxilios\Bases\ControllerBase;
+use App\Auxilios\Essentials\Request;
+use App\Auxilios\Essentials\Session;
 use App\Classes\Funcionario;
 use App\DTOs\FuncionarioStoreRequest;
 use App\DTOs\FuncionarioUpdateRequest;
@@ -32,7 +32,6 @@ class FuncionariosController extends ControllerBase
     {
         $funcionario = (new FuncionarioStoreRequest(...$request->all()))->getFuncionario();
         if ($funcionario == false) {
-            self::erro("Erro ao validar dados");
             redirect("funcionarios/criar", true);
         } 
         if ($funcionario->salvar()) {
@@ -60,23 +59,17 @@ class FuncionariosController extends ControllerBase
 
     public function update(string $id, Request $request)
     {
-        $funcionario = Funcionario::buscar($id);
-        if (!$funcionario) {
-            self::erro("Funcionario não encontrado", null, 404);
-            redirect("/funcionarios", false);
-        }
         $funcionario = (new FuncionarioUpdateRequest($id, ...$request->all()))->getFuncionario();
         if ($funcionario == false) {
-            self::erro("Erro ao validar dados");
             redirect("/funcionarios/editar/" . $id, true);
         } 
         if ($funcionario->salvar()) {
             self::toast("Funcionario salvo com sucesso", "success");
             redirect("/funcionarios", false);
-        } else {
-            self::erro("Erro ao salvar funcionario");
-            redirect("/funcionarios/editar/" . $id, true);
         }
+
+        self::erro("Erro ao salvar funcionario");
+        redirect("/funcionarios/editar/" . $id, true);
     }
 
     public function delete(string $id)

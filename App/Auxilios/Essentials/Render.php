@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Auxilios;
+namespace App\Auxilios\Essentials;
 
 use App\Classes\Erros;
 use App\Classes\Toasts;

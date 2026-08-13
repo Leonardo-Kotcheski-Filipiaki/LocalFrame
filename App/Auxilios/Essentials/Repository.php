@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Auxilios;
+namespace App\Auxilios\Essentials;
 
+use App\Auxilios\Bases\ClasseBase;
+use App\Auxilios\Notations\Ignorar;
 use ReflectionClass;
 use ReflectionNamedType;
 

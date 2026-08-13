@@ -4,7 +4,7 @@ namespace App\DTOs;
 
 use App\Classes\Cliente;
 use App\Enums\Nivel;
-use App\Auxilios\Render;
+use App\Auxilios\Essentials\Render;
 
 readonly class ClienteUpdateRequest
 {
@@ -29,6 +29,10 @@ readonly class ClienteUpdateRequest
 
         if (is_string($idade)) {
             $idade = (int) $idade;
+        }
+        
+        if (validarVazio($dinheiro)) {
+            Render::erro("Dinheiro não pode ser vazio", "dinheiro", 400);
         }
 
         if (is_string($dinheiro)) {

@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
-use App\Auxilios\ControllerBase;
-use App\Auxilios\Request;
-use App\Auxilios\Session;
+use App\Auxilios\Bases\ControllerBase;
+use App\Auxilios\Essentials\Request;
+use App\Auxilios\Essentials\Session;
 use App\Classes\Produto;
 use App\DTOs\ProdutoStoreRequest;
 use App\DTOs\ProdutoUpdateRequest;
@@ -30,17 +30,17 @@ class ProdutosController extends ControllerBase
     public function store(Request $request) 
     {
         $produto = (new ProdutoStoreRequest(...$request->all()))->getProduto();
-        if ($produto != false) {
-            if ($produto->salvar()) {
-                self::toast("Produto salvo com sucesso", "success");
-                redirect("produtos", false);
-            } else {
-                self::toast("Erro ao salvar produto", "error");
-                redirect("produtos/criar", true);
-            }
-        } else {
-            redirect("produtos/criar", true);
+        if ($produto == false) {
+            redirect("/produtos/criar", true);
         }
+
+        if ($produto->salvar()) {
+            self::toast("Produto salvo com sucesso", "success");
+            redirect("/produtos", false);
+        }
+
+        self::erro("Erro ao salvar produto");
+        redirect("/produtos/criar", true);
     }
 
     public function edit(string $id) 
@@ -54,24 +54,18 @@ class ProdutosController extends ControllerBase
 
     public function update(string $id, Request $request) 
     {
-        $produto = Produto::buscar($id);
-        if (!$produto) {
-            self::erro("Produto não encontrado", null, 404);
-            redirect("/produtos", false);
-        }
         $produto = (new ProdutoUpdateRequest($id, ...$request->all()))->getProduto();
         if ($produto == false) {
-            self::erro("Erro ao validar dados");
             redirect("/produtos/editar/" . $id, true);
-        } 
+        }
 
         if ($produto->salvar()) {
             self::toast("Produto salvo com sucesso", "success");
             redirect("/produtos", false);
-        } else {
-            self::erro("Erro ao salvar produto");
-            redirect("/produtos/editar/" . $id, true);
         }
+
+        self::erro("Erro ao salvar produto");
+        redirect("/produtos/editar/" . $id, true);
         
     }
 

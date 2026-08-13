@@ -2,11 +2,12 @@
 
 namespace App\DTOs;
 
-use App\Auxilios\Render;
+use App\Auxilios\Essentials\Render;
 use App\Classes\Cliente;
 use App\Classes\Funcionario;
 use App\Classes\Produto;
 use App\Classes\Venda;
+use App\Enums\Cargo;
 use App\Enums\TipoCompra;
 
 class VendasStoreRequest {
@@ -19,17 +20,22 @@ class VendasStoreRequest {
         public int|string $quantidadeParcelas,
         public int|string $quantidadeVendida
     ) {
-
         if (empty($cliente) OR Cliente::buscar($cliente) == null) {
             Render::erro("Cliente não encontrado");
+        } else {
+            $cliente = Cliente::buscar($cliente);
         }
 
         if (empty($funcionario) OR Funcionario::buscar($funcionario) == null) {
             Render::erro("Funcionario não encontrado");
+        } else {
+            $funcionario = Funcionario::buscar($funcionario);
         }
 
         if (empty($produto) OR Produto::buscar($produto) == null) {
             Render::erro("Produto não encontrado");
+        } else {
+            $produto = Produto::buscar($produto);
         }
 
         if (empty($tipoCompra) OR !in_array($tipoCompra, TipoCompra::getStringTipos())) {
@@ -43,6 +49,20 @@ class VendasStoreRequest {
 
         if (empty($quantidadeVendida) OR $quantidadeVendida <= 0) {
             Render::erro("Quantidade de produto inválida");
+        }
+
+        if ($funcionario->getCargo() != Cargo::VENDEDOR) {
+            Render::erro("Funcionario não pode vender");
+        }
+
+        if ($tipoCompra == TipoCompra::D->value) {
+            if ($cliente->getDinheiro() < ($produto->getValor() * $quantidadeVendida)) {
+                Render::erro("Cliente não tem dinheiro suficiente");
+            }
+        } else if ($tipoCompra == TipoCompra::CR->value) {
+            if ($cliente->getNivel()->value < ($produto->getValor() * $quantidadeVendida)) {
+                Render::erro("Crédito do cliente insuficiente");
+            }
         }
 
     }

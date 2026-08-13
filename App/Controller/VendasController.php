@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
-use App\Auxilios\ControllerBase;
-use App\Auxilios\Request;
-use App\Auxilios\Session;
+use App\Auxilios\Bases\ControllerBase;
+use App\Auxilios\Essentials\Request;
+use App\Auxilios\Essentials\Session;
 use App\Classes\Cliente;
 use App\Classes\Funcionario;
 use App\Classes\Produto;
@@ -61,7 +61,19 @@ class VendasController extends ControllerBase
 
     public function delete(string $id) 
     {
-        self::render('vendas/delete');
+        $venda = Venda::buscar($id);
+        if ($venda == null) {
+            self::erro("Venda não encontrada", "error", 404);
+            redirect("/vendas", false);
+        }
+
+        if ($venda->remover()) {
+            self::toast("Venda removida com sucesso", "success");
+            redirect("/vendas", false);
+        }
+
+        self::erro("Erro ao remover a venda", "error");
+        redirect("/vendas", false);
     }
 
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Auxilios;
+namespace App\Auxilios\Bases;
 
-use App\Auxilios\Render;
+use App\Auxilios\Essentials\Render;
 
 class ControllerBase
 {

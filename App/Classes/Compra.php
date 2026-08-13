@@ -2,7 +2,7 @@
 
 namespace App\Classes;
 
-use App\Auxilios\ClasseBase;
+use App\Auxilios\Bases\ClasseBase;
 use App\Enums\TipoCompra;
 
 class Compra extends ClasseBase
