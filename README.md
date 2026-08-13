@@ -57,4 +57,4 @@ Atualmente, o projeto executa de forma 100% local e serve como base para o estud
 ## 👨‍💻 Autor
 Desenvolvido por Leonardo Kotcheski Filipiaki.
 
-GitHub: @Leonardo-Kotcheski-Filipiaki
+GitHub: [@Leonardo Kotcheski Filipiaki](https://github.com/Leonardo-Kotcheski-Filipiaki)
