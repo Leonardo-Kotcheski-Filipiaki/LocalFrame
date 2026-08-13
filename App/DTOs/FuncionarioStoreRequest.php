@@ -4,7 +4,7 @@ namespace App\DTOs;
 
 use App\Classes\Funcionario;
 use App\Enums\Cargo;
-use App\Auxilios\Essentials\Render;
+use Core\Essentials\Render;
 
 readonly class FuncionarioStoreRequest
 {

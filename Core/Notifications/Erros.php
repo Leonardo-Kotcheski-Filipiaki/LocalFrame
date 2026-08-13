@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Auxilios\Notifications;
+namespace Core\Notifications;
 /**
  * Summary of Erros
  * Fatals

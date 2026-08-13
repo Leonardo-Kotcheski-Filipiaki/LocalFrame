@@ -4,7 +4,7 @@ namespace App\DTOs;
 
 use App\Classes\Cliente;
 use App\Enums\Nivel;
-use App\Auxilios\Essentials\Render;
+use Core\Essentials\Render;
 
 readonly class ClienteStoreRequest
 {

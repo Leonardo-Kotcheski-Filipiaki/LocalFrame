@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Auxilios\Essentials;
+namespace Core\Essentials;
 
-use App\Auxilios\Notifications\Erros;
-use App\Auxilios\Notifications\Toasts;
+use Core\Notifications\Erros;
+use Core\Notifications\Toasts;
 
 class Render
 {
@@ -12,13 +12,13 @@ class Render
 
     public static function render(string $arquivo, array $dados = [])
     {
-        $caminho = __DIR__ . "/../../Views/" . $arquivo . ".phtml";
+        $caminho = __DIR__ . "/../../App/Views/" . $arquivo . ".phtml";
 
         if (file_exists($caminho)) {
-            $conteudo = file_get_contents($caminho) . file_get_contents(__DIR__ . '/../../Views/ui/toast.phtml');
+            $conteudo = file_get_contents($caminho) . file_get_contents(__DIR__ . '/../../App/Views/ui/toast.phtml');
 
             $conteudo = preg_replace_callback('/@include_layout\s*\([\'"](.*?)[\'"]\);?/', function($matches) {
-                $arquivoInclude = __DIR__ . "/../../Views/_base/" . $matches[1] . ".phtml";
+                $arquivoInclude = __DIR__ . "/../../App/Views/_base/" . $matches[1] . ".phtml";
                 return file_exists($arquivoInclude) ? file_get_contents($arquivoInclude) : "<!-- Include não encontrado: {$matches[1]} -->";
             }, $conteudo);
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Auxilios\Essentials;
+namespace Core\Essentials;
 
 class Request
 {

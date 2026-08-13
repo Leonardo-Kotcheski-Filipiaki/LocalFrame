@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Auxilios\Essentials;
+namespace Core\Essentials;
 
-use App\Auxilios\Bases\ClasseBase;
-use App\Auxilios\Notations\Ignorar;
+use Core\Bases\ClasseBase;
+use Core\Notations\Ignorar;
 use ReflectionClass;
 use ReflectionNamedType;
 
@@ -13,7 +13,7 @@ class Repository
     private string $diretorio;
     private string $delimitador = ';';
 
-    public function __construct(string $diretorioStorage = __DIR__ . '/../../database')
+    public function __construct(string $diretorioStorage = __DIR__ . '/../../App/database')
     {
         $this->diretorio = rtrim($diretorioStorage, '/') . '/';
         $this->garantirDiretorio();

@@ -2,7 +2,7 @@
 
 namespace App\Classes;
 
-use App\Auxilios\Bases\ClasseBase;
+use Core\Bases\ClasseBase;
 
 class Pessoa extends ClasseBase
 {

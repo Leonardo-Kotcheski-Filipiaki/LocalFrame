@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Auxilios\Bases;
+namespace Core\Bases;
 
-use App\Auxilios\Essentials\Repository;
+use Core\Essentials\Repository;
 
 abstract class ClasseBase
 {

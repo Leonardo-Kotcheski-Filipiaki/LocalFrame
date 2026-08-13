@@ -39,8 +39,8 @@ Atualmente, o projeto executa de forma 100% local e serve como base para o estud
 
 1. **Clone o repositório:**
    ```bash
-   git clone [https://github.com/Leonardo-Kotcheski-Filipiaki/A-Local-Frame.git](https://github.com/Leonardo-Kotcheski-Filipiaki/A-Local-Frame.git)
-   cd A-Local-Frame
+   git clone [https://github.com/Leonardo-Kotcheski-Filipiaki/LocalFrame.git](https://github.com/Leonardo-Kotcheski-Filipiaki/LocalFrame.git)
+   cd LocalFrame
 2. **Iniciar o servidor embutido no PHP via terminal**
    ```bash
    php -S localhost:8000 -t public
@@ -49,10 +49,26 @@ Atualmente, o projeto executa de forma 100% local e serve como base para o estud
    ```plaintext
    localhost:8000
 
-## Estrutura do projeto
-   ```
-   trabalhando nessa documentação...
-   ```
+LocalFrame/
+   ├── 📁 App/                         # Camada da Aplicação (código do projeto)
+   │   ├── 📁 Classes/                 # Regras de negócio e entidades (camada equivalente às Models)
+   │   ├── 📁 Configurations/          # Arquivos de configuração da aplicação
+   │   ├── 📁 Controllers/             # Controladores que gerenciam o fluxo de requisição e resposta
+   │   ├── 📁 database/                # Armazenamento do banco de dados local e migrações
+   │   ├── 📁 DTOs/                    # Data Transfer Objects (transportadores de dados tipados)
+   │   ├── 📁 Enums/                   # Enumeradores tipados da aplicação
+   │   └── 📁 Views/                   # Camada de apresentação (templates e arquivos de interface)
+   │
+   ├── 📁 Core/                        # Núcleo e engrenagens do Framework
+   │   ├── 📁 Bases/                   # Classes base e contratos abstratos para Controllers e Classes
+   │   ├── 📁 Essentials/              # O "motor" do framework (Roteamento, ciclo HTTP, Engine)
+   │   ├── 📁 Notations/               # Mapeamento de atributos nativos do PHP (PHP Attributes / Annotations)
+   │   └── 📁 Notifications/           # Sistema de notificações, mensagens flash e tratamento de alertas
+   │
+   ├── 📄 .gitignore                   # Arquivo de regras para ignorar arquivos no versionamento Git
+   ├── 📄 _autoload.php                # Autoloader nativo e leve para carregamento dinâmico de classes
+   ├── 📄 index.php                    # Front Controller (ponto de entrada único de todas as requisições)
+   └── 📄 README.md                    # Documentação técnica do repositório
 
 ## 👨‍💻 Autor
 Desenvolvido por Leonardo Kotcheski Filipiaki.

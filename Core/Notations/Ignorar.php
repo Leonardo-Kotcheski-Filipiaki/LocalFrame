@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Auxilios\Notations;
+namespace Core\Notations;
 
 use Attribute;
 

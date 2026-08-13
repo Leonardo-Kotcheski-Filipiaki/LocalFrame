@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Auxilios\Essentials;
+namespace Core\Essentials;
 
+use Core\Essentials\Render;
 use Throwable;
 
 class ExceptionHandler 

@@ -1,6 +1,6 @@
 <?php
 
-use App\Auxilios\Essentials\Router;
+use Core\Essentials\Router;
 Router::get('/', "DefaultController@index");
 
 //Clientes

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Auxilios\Notifications;
+namespace Core\Notifications;
 
-use App\Auxilios\Essentials\Render;
+use Core\Essentials\Render;
 
 class Toasts
 {

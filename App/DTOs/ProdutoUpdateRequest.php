@@ -2,7 +2,7 @@
 
 namespace App\DTOs;
 
-use App\Auxilios\Essentials\Render;
+use Core\Essentials\Render;
 use App\Classes\Produto;
 use App\Enums\TipoProduto;
 

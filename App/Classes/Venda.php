@@ -2,9 +2,9 @@
 
 namespace App\Classes;
 
-use App\Auxilios\Bases\ClasseBase;
+use Core\Bases\ClasseBase;
 use App\Enums\TipoCompra;
-use App\Auxilios\Notations\Ignorar;
+use Core\Notations\Ignorar;
 use Override;
 
 class Venda extends ClasseBase

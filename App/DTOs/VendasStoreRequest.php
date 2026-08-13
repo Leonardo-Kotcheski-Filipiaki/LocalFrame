@@ -2,7 +2,7 @@
 
 namespace App\DTOs;
 
-use App\Auxilios\Essentials\Render;
+use Core\Essentials\Render;
 use App\Classes\Cliente;
 use App\Classes\Funcionario;
 use App\Classes\Produto;

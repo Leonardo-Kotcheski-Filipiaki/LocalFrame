@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
-use App\Auxilios\Bases\ControllerBase;
-use App\Auxilios\Essentials\Request;
-use App\Auxilios\Essentials\Session;
+use Core\Bases\ControllerBase;
+use Core\Essentials\Request;
+use Core\Essentials\Session;
 use App\Classes\Funcionario;
 use App\DTOs\FuncionarioStoreRequest;
 use App\DTOs\FuncionarioUpdateRequest;
