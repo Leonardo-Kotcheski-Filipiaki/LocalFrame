@@ -1,0 +1,3 @@
+App/database
+App/database/**
+.env
