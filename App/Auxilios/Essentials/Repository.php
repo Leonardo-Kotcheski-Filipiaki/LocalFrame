@@ -13,7 +13,7 @@ class Repository
     private string $diretorio;
     private string $delimitador = ';';
 
-    public function __construct(string $diretorioStorage = __DIR__ . '/../database')
+    public function __construct(string $diretorioStorage = __DIR__ . '/../../database')
     {
         $this->diretorio = rtrim($diretorioStorage, '/') . '/';
         $this->garantirDiretorio();

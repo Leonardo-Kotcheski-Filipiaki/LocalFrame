@@ -2,7 +2,7 @@
 
 namespace App\Auxilios\Bases;
 
-use App\Auxilios\Repository;
+use App\Auxilios\Essentials\Repository;
 
 abstract class ClasseBase
 {

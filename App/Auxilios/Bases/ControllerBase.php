@@ -11,12 +11,12 @@ class ControllerBase
         Render::render($arquivo, $dados);
     }
 
-    protected static function erro(string $mensagem, string|null $tipo = null, int $status = 400)
+    protected static function erro(string $mensagem, int $status = 400)
     {
-        Render::erro($mensagem, $tipo, $status);
+        Render::erro($mensagem, $status);
     }
 
-    protected static function toast(string $mensagem, string|null $tipo = null)
+    protected static function toast(string $mensagem, string $tipo = 'a')
     {
         Render::toast($mensagem, $tipo);
     }

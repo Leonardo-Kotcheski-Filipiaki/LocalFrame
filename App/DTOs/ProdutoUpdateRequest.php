@@ -18,7 +18,7 @@ class ProdutoUpdateRequest
     ) {
 
         if (empty($id) || !Produto::buscar($id)){
-            Render::erro("Id inválido");
+            Render::toast("Id inválido", 'a');
         }
 
         if (is_string($quantidade)) {
@@ -30,36 +30,35 @@ class ProdutoUpdateRequest
         }
 
         if (empty($produto) || strlen($produto) < 3 || strlen($produto) > 100) {
-            Render::erro("Produto inválido");
+            Render::toast("Produto inválido", 'a');
         }
 
         if (empty($tipoProduto) || !in_array($tipoProduto, TipoProduto::getStringTipoProdutos())) {
-            Render::erro("Tipo de produto inválido");
+            Render::toast("Tipo de produto inválido", 'a');
         }
 
         if ($quantidade <= 0 || $quantidade > 10000) {
-            Render::erro("Quantidade inválida");
+            Render::toast("Quantidade inválida", 'a');
         }
 
         if ($valor <= 0 || $valor > 1000000) {
-            Render::erro("Valor inválido");
+            Render::toast("Valor inválido", 'a');
         }
     }
 
     public function getProduto(): Produto|false
     {
-        if (Render::hasErros()) {
-            return false;
-        }
-
-        return new Produto(
+        if (!Render::hasToasts()) {
+            return new Produto(
             $this->produto,
             $this->descricao,
             TipoProduto::from($this->tipoProduto),
             (int) $this->quantidade,
             (float) str_replace(",", ".", $this->valor),
             $this->id
-        );
+            );
+        }
+        return false;
     }
 
 }

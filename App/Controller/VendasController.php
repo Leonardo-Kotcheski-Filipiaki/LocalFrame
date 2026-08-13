@@ -38,10 +38,10 @@ class VendasController extends ControllerBase
         $venda = (new VendasStoreRequest(...$request->all()))->getVenda();
         if ($venda != false) {
             if ($venda->salvar()) {
-                self::toast("Venda salva com sucesso", "success");
+                self::toast("Venda salva com sucesso", 's');
                 redirect("vendas", false);
             } else {
-                self::toast("Erro ao salvar venda", "error");
+                self::toast("Erro ao salvar venda", 'a');
                 redirect("vendas/criar", true);
             }
         } else {
@@ -63,16 +63,16 @@ class VendasController extends ControllerBase
     {
         $venda = Venda::buscar($id);
         if ($venda == null) {
-            self::erro("Venda não encontrada", "error", 404);
+            self::toast("Venda não encontrada", 'a');
             redirect("/vendas", false);
         }
 
         if ($venda->remover()) {
-            self::toast("Venda removida com sucesso", "success");
+            self::toast("Venda removida com sucesso", 's');
             redirect("/vendas", false);
         }
 
-        self::erro("Erro ao remover a venda", "error");
+        self::toast("Erro ao remover a venda", 'a');
         redirect("/vendas", false);
     }
 

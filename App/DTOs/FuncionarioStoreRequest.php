@@ -15,11 +15,11 @@ readonly class FuncionarioStoreRequest
         public float|string $salario
     ) {
         if (validarVazio($nome)) {
-            Render::erro("Nome inválido", "nome", 400);
+            Render::toast("Nome inválido", 'a');
         }
 
         if (validarVazio($idade)) {
-            Render::erro("Idade não pode ser vazia", "idade", 400);
+            Render::toast("Idade não pode ser vazia", 'a');
         }
 
         if (is_string($idade)) {
@@ -27,7 +27,7 @@ readonly class FuncionarioStoreRequest
         }
 
         if (validarVazio($salario)) {
-            Render::erro("Salario não pode ser vazio", "salario", 400);
+            Render::toast("Salario não pode ser vazio", 'a');
         }
 
         if (is_string($salario)) {
@@ -35,29 +35,28 @@ readonly class FuncionarioStoreRequest
         }
         
         if ($idade < 0) {
-            Render::erro("Idade não pode ser menor que 0", "idade", 400);
+            Render::toast("Idade não pode ser menor que 0", 'a');
         }
 
         if ($salario < 0) {
-            Render::erro("Salario não pode ser negativo", "salario", 400);
+            Render::toast("Salario não pode ser negativo", 'a');
         }
 
         if (validarVazio($cargo)) {
-            Render::erro("Cargo não pode ser vazio", "cargo", 400);
+            Render::toast("Cargo não pode ser vazio", 'a');
         }
 
         if (!in_array($cargo, Cargo::getCargos())) {
-            Render::erro("Cargo inválido", "cargo", 400);
+            Render::toast("Cargo inválido", 'a');
         }
 
     }
 
     public function getFuncionario(): Funcionario|bool
     {
-        if (!Render::hasErros()) {
+        if (!Render::hasToasts()) {
             return new Funcionario($this->nome, (int)$this->idade, Cargo::from($this->cargo), (float) str_replace(',', '.',$this->salario), null);
-        } else {
-            return false;
         }
+        return false;
     }
 }

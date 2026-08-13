@@ -16,15 +16,15 @@ readonly class ClienteUpdateRequest
         public float|string $dinheiro
     ) {
         if (validarVazio($id)) {
-            Render::erro("Id não pode ser vazio", null, 400);
+            Render::toast("Id não pode ser vazio", 'a');
         }
 
         if (validarVazio($nome)) {
-            Render::erro("Nome inválido", "nome", 400);
+            Render::toast("Nome inválido", 'a');
         }
 
         if (validarVazio($idade)) {
-            Render::erro("Idade não pode ser vazia", "idade", 400);
+            Render::toast("Idade não pode ser vazia", 'a');
         }
 
         if (is_string($idade)) {
@@ -32,7 +32,7 @@ readonly class ClienteUpdateRequest
         }
         
         if (validarVazio($dinheiro)) {
-            Render::erro("Dinheiro não pode ser vazio", "dinheiro", 400);
+            Render::toast("Dinheiro não pode ser vazio", 'a');
         }
 
         if (is_string($dinheiro)) {
@@ -40,24 +40,23 @@ readonly class ClienteUpdateRequest
         }
 
         if ($idade < 0) {
-            Render::erro("Idade não pode ser menor que 0", "idade", 400);
+            Render::toast("Idade não pode ser menor que 0", 'a');
         }
 
         if (validarVazio($nivel)) {
-            Render::erro("Nível não pode ser vazio", "nivel", 400);
+            Render::toast("Nível não pode ser vazio", 'a');
         }
         
         if (!in_array($nivel, Nivel::getStringNiveis())) {
-            Render::erro("Nível inválido", "nivel", 400);
+            Render::toast("Nível inválido", 'a');
         }
     }
 
     public function getCliente(): Cliente|bool
     {
-        if (!Render::hasErros()) {
+        if (!Render::hasToasts()) {
             return new Cliente($this->nome, (int) $this->idade, Nivel::from($this->nivel), (float) str_replace(',', '.', $this->dinheiro), $this->id);
-        } else {
-            return false;
         }
+        return false;
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
 use App\Auxilios\Essentials\Router;
-
 Router::get('/', "DefaultController@index");
+
 //Clientes
 Router::get('/clientes', 'ClientesController@index');
 Router::get('/clientes/criar', 'ClientesController@create');

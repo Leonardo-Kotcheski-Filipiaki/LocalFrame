@@ -7,7 +7,7 @@
  * @description Funções auxiliares do sistema
  */
 
-use App\Auxilios\Bases\Session;
+use App\Auxilios\Essentials\Session;
 
 if (session_status() == PHP_SESSION_NONE) {
     session_start();

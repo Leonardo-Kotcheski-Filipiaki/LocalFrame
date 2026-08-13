@@ -33,10 +33,11 @@ class ClientesController extends ControllerBase
             redirect("clientes/criar", true);
         }
         if ($cliente->salvar()) {
-            self::toast("Cliente salvo com sucesso", "success");
+            self::toast("Cliente salvo com sucesso", 's');
             redirect("clientes", false);
         }
         
+        self::toast("Erro ao salvar cliente", 'a');
         redirect("clientes/criar", true);
         
     }
@@ -45,7 +46,7 @@ class ClientesController extends ControllerBase
     {
         $cliente = Cliente::buscar($id);
         if ($cliente == false) {
-            self::erro("Cliente não encontrado", null, 404);
+            self::toast("Cliente não encontrado", 'a');
             redirect("clientes", false);
         }
         
@@ -59,11 +60,11 @@ class ClientesController extends ControllerBase
             redirect("/clientes/editar/$id", true);
         }
         if ($cliente->salvar()) {
-            self::toast("Cliente atualizado com sucesso", "success");
+            self::toast("Cliente atualizado com sucesso", "s");
             redirect("/clientes", false);
         }
         
-        self::erro("Erro ao atualizar cliente");
+        self::toast("Erro ao atualizar cliente", 'a');
         redirect("/clientes/editar/$id", true);
         
 
@@ -73,15 +74,15 @@ class ClientesController extends ControllerBase
     {
         $cliente = Cliente::buscar($id);
         if ($cliente == false) {
-            self::erro("Cliente não encontrado", null, 404);
+            self::toast("Cliente não encontrado", 'a');
             redirect("clientes", false);
         }
 
         if ($cliente->remover()) {
-            self::toast("Cliente excluído com sucesso", "success");
+            self::toast("Cliente excluído com sucesso", "s");
             redirect('/clientes', false);
         } else {
-            self::erro("Erro ao excluir cliente");
+            self::toast("Erro ao excluir cliente", 'a');
             redirect('/clientes', true);
         }
 

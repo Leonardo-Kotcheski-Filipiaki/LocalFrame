@@ -35,11 +35,11 @@ class ProdutosController extends ControllerBase
         }
 
         if ($produto->salvar()) {
-            self::toast("Produto salvo com sucesso", "success");
+            self::toast("Produto salvo com sucesso", 's');
             redirect("/produtos", false);
         }
 
-        self::erro("Erro ao salvar produto");
+        self::toast("Erro ao salvar produto", 'a');
         redirect("/produtos/criar", true);
     }
 
@@ -60,11 +60,11 @@ class ProdutosController extends ControllerBase
         }
 
         if ($produto->salvar()) {
-            self::toast("Produto salvo com sucesso", "success");
+            self::toast("Produto salvo com sucesso", 's');
             redirect("/produtos", false);
         }
 
-        self::erro("Erro ao salvar produto");
+        self::toast("Erro ao salvar produto", 'a');
         redirect("/produtos/editar/" . $id, true);
         
     }
@@ -73,12 +73,12 @@ class ProdutosController extends ControllerBase
     {
         $produto = Produto::buscar($id);
         if (!$produto) {
-            self::erro("Produto não encontrado", null, 404);
+            self::toast("Produto não encontrado", 'a');
             redirect("/produtos", false);
         }
 
         if ($produto->remover()) {
-            self::toast("Produto removido com sucesso", "success");
+            self::toast("Produto removido com sucesso", 's');
         } else {
             self::erro("Erro ao remover produto");
         }

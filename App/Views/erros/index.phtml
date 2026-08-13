@@ -1,15 +1,15 @@
 @include_layout('header')
 
 <div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
+    <div class="row">
+        <div class="col-md-12">
             <div class="card shadow border-danger">
                 <div class="card-header bg-danger text-white fw-bold">
-                    <i class="fas fa-exclamation-triangle"></i> Erro do Sistema (<?= $codigo ?? 500 ?>)
+                    <i class="fas fa-exclamation-triangle"></i> Erro do Sistema ({{ $codigo ?? 500 }})
                 </div>
                 <div class="card-body text-center py-5">
                     <h4 class="text-danger mb-4">Algo deu errado!</h4>
-                    <p class="lead"><?= htmlspecialchars($mensagem ?? 'Um erro inesperado ocorreu.') ?></p>
+                    <p class="lead text-start"> {{ $mensagem ?? 'Um erro inesperado ocorreu.' }} </p>
                     <hr class="my-4">
                     <a href="javascript:history.back()" class="btn btn-outline-secondary me-2">Voltar</a>
                     <a href="/" class="btn btn-primary">Ir para a Página Inicial</a>

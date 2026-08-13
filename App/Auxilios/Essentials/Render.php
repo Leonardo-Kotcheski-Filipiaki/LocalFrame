@@ -2,8 +2,8 @@
 
 namespace App\Auxilios\Essentials;
 
-use App\Classes\Erros;
-use App\Classes\Toasts;
+use App\Auxilios\Notifications\Erros;
+use App\Auxilios\Notifications\Toasts;
 
 class Render
 {
@@ -12,13 +12,13 @@ class Render
 
     public static function render(string $arquivo, array $dados = [])
     {
-        $caminho = __DIR__ . "/../Views/" . $arquivo . ".phtml";
+        $caminho = __DIR__ . "/../../Views/" . $arquivo . ".phtml";
 
         if (file_exists($caminho)) {
-            $conteudo = file_get_contents($caminho) . file_get_contents(__DIR__ . '/../Views/ui/toast.phtml');
+            $conteudo = file_get_contents($caminho) . file_get_contents(__DIR__ . '/../../Views/ui/toast.phtml');
 
             $conteudo = preg_replace_callback('/@include_layout\s*\([\'"](.*?)[\'"]\);?/', function($matches) {
-                $arquivoInclude = __DIR__ . "/../Views/_base/" . $matches[1] . ".phtml";
+                $arquivoInclude = __DIR__ . "/../../Views/_base/" . $matches[1] . ".phtml";
                 return file_exists($arquivoInclude) ? file_get_contents($arquivoInclude) : "<!-- Include não encontrado: {$matches[1]} -->";
             }, $conteudo);
 
@@ -47,7 +47,7 @@ class Render
                     if ($e instanceof Erros) {
                         $errosSessao[] = $e;
                     } elseif (is_array($e)) {
-                        $errosSessao[] = new Erros($e['mensagem'] ?? '', $e['elementoHTML'] ?? null, $e['codigo'] ?? 400);
+                        $errosSessao[] = new Erros($e['mensagem'] ?? '', $e['codigo'] ?? 400);
                     }
                 }
             }
@@ -64,24 +64,14 @@ class Render
             
             eval('?>' . $conteudo);
         } else {
-            self::erro("View não encontrada", null, 500);
+            self::erro("View não encontrada", 500);
         }
     }
 
-    public static function erro(string $mensagem, string|null $elementoHTML = null, int $codigo = 400): void
+    public static function erro(string $mensagem, int $codigo = 400): void
     {
-        if ($elementoHTML === null && ($codigo === 500 || $codigo === 404)) {
-            self::render("erros/index", ["mensagem" => $mensagem, "codigo" => $codigo]);
-            exit;
-        }
-
-        self::$erros[] = new Erros($mensagem, $elementoHTML, $codigo);
-
-        $_SESSION['_erros'][] = [
-            'mensagem' => $mensagem,
-            'elementoHTML' => $elementoHTML,
-            'codigo' => $codigo
-        ];
+        self::render("erros/index", ["mensagem" => $mensagem, "codigo" => $codigo]);
+        exit;
     }
 
     public static function toast(string $mensagem, string $tipo): void
@@ -92,11 +82,6 @@ class Render
             'mensagem' => $mensagem,
             'tipo' => $tipo
         ];
-    }
-
-    public static function hasErros(): bool
-    {
-        return count(self::$erros) > 0 || !empty($_SESSION['_erros']);
     }
 
     public static function hasToasts(): bool

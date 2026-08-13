@@ -35,10 +35,10 @@ class FuncionariosController extends ControllerBase
             redirect("funcionarios/criar", true);
         } 
         if ($funcionario->salvar()) {
-            self::toast("Funcionario salvo com sucesso", "success");
+            self::toast("Funcionario salvo com sucesso", "s");
             redirect("funcionarios", false);
         } else {
-            self::erro("Erro ao salvar funcionario");
+            self::toast("Erro ao salvar funcionario", "a");
             redirect("funcionarios/criar", true);
         }
     }
@@ -47,7 +47,7 @@ class FuncionariosController extends ControllerBase
     {
         $funcionario = Funcionario::buscar($id);
         if (!$funcionario) {
-            self::erro("Funcionario não encontrado", null, 404);
+            self::toast("Funcionario não encontrado", 'a');
             redirect("funcionarios", false);
         }
         self::render("funcionarios/editar",[
@@ -64,11 +64,11 @@ class FuncionariosController extends ControllerBase
             redirect("/funcionarios/editar/" . $id, true);
         } 
         if ($funcionario->salvar()) {
-            self::toast("Funcionario salvo com sucesso", "success");
+            self::toast("Funcionario salvo com sucesso", 's');
             redirect("/funcionarios", false);
         }
 
-        self::erro("Erro ao salvar funcionario");
+        self::toast("Erro ao salvar funcionario", 'a');
         redirect("/funcionarios/editar/" . $id, true);
     }
 
@@ -76,14 +76,14 @@ class FuncionariosController extends ControllerBase
     {
         $funcionario = Funcionario::buscar($id);
         if (!$funcionario) {
-            self::erro("Funcionario não encontrado", null, 404);
+            self::toast("Funcionario não encontrado", 'a');
             redirect("/funcionarios", false);
         }
         if ($funcionario->remover()) {
-            self::toast("Funcionario removido com sucesso", "success");
+            self::toast("Funcionario removido com sucesso", 's');
             redirect("/funcionarios", false);
         } else {
-            self::erro("Erro ao remover funcionario");
+            self::toast("Erro ao remover funcionario", 'a');
             redirect("/funcionarios", false);
         }
     }
