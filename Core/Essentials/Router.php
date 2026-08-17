@@ -32,9 +32,7 @@ class Router
     {
         try {
             $request = new Request();
-        
             $uri = parse_url($uri, PHP_URL_PATH);
-
             if (!isset(self::$rotas[$metodo])) {
                 http_response_code(404);
                 echo "404 Not Found";

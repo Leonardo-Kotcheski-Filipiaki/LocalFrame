@@ -8,6 +8,6 @@
  */
 
 require_once './_autoload.php';
-require_once './App/Auxilios/Essentials/helpers.php';
+require_once './Core/Essentials/helpers.php';
 require_once './App/Configurations/Routes.php';
 
