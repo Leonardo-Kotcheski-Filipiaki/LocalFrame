@@ -32,7 +32,6 @@ Atualmente, o projeto executa de forma 100% local e serve como base para o estud
 
 * **PHP >= 8.4**
 * Servidor web local (ou o próprio servidor embutido do PHP)
-* 
 ---
 
 ## 🚀 Como Executar o Projeto Localmente
@@ -48,27 +47,29 @@ Atualmente, o projeto executa de forma 100% local e serve como base para o estud
    + Pode acessar o navegador via
    ```plaintext
    localhost:8000
-
-LocalFrame/
-   ├── 📁 App/                         # Camada da Aplicação (código do projeto)
-   │   ├── 📁 Classes/                 # Regras de negócio e entidades (camada equivalente às Models)
-   │   ├── 📁 Configurations/          # Arquivos de configuração da aplicação
-   │   ├── 📁 Controllers/             # Controladores que gerenciam o fluxo de requisição e resposta
-   │   ├── 📁 database/                # Armazenamento do banco de dados local e migrações
-   │   ├── 📁 DTOs/                    # Data Transfer Objects (transportadores de dados tipados)
-   │   ├── 📁 Enums/                   # Enumeradores tipados da aplicação
-   │   └── 📁 Views/                   # Camada de apresentação (templates e arquivos de interface)
-   │
-   ├── 📁 Core/                        # Núcleo e engrenagens do Framework
-   │   ├── 📁 Bases/                   # Classes base e contratos abstratos para Controllers e Classes
-   │   ├── 📁 Essentials/              # O "motor" do framework (Roteamento, ciclo HTTP, Engine)
-   │   ├── 📁 Notations/               # Mapeamento de atributos nativos do PHP (PHP Attributes / Annotations)
-   │   └── 📁 Notifications/           # Sistema de notificações, mensagens flash e tratamento de alertas
-   │
-   ├── 📄 .gitignore                   # Arquivo de regras para ignorar arquivos no versionamento Git
-   ├── 📄 _autoload.php                # Autoloader nativo e leve para carregamento dinâmico de classes
-   ├── 📄 index.php                    # Front Controller (ponto de entrada único de todas as requisições)
-   └── 📄 README.md                    # Documentação técnica do repositório
+4. **Estrutura de pastas**
+   ```plaintext
+   LocalFrame/
+      ├── 📁 App/                         # Camada da Aplicação (código do projeto)
+      │   ├── 📁 Classes/                 # Regras de negócio e entidades (camada equivalente às Models)
+      │   ├── 📁 Configurations/          # Arquivos de configuração da aplicação
+      │   ├── 📁 Controllers/             # Controladores que gerenciam o fluxo de requisição e resposta
+      │   ├── 📁 database/                # Armazenamento do banco de dados local e migrações
+      │   ├── 📁 DTOs/                    # Data Transfer Objects (transportadores de dados tipados)
+      │   ├── 📁 Enums/                   # Enumeradores tipados da aplicação
+      │   └── 📁 Views/                   # Camada de apresentação (templates e arquivos de interface)
+      │
+      ├── 📁 Core/                        # Núcleo e engrenagens do Framework
+      │   ├── 📁 Bases/                   # Classes base e contratos abstratos para Controllers e Classes
+      │   ├── 📁 Essentials/              # O "motor" do framework (Roteamento, ciclo HTTP, Engine)
+      │   ├── 📁 Notations/               # Mapeamento de atributos nativos do PHP (PHP Attributes / Annotations)
+      │   ├── 📁 Notifications/           # Sistema de notificações, mensagens flash e tratamento de alertas
+      │   └── 📁 Traits/                  # Comportamentos e métodos reutilizáveis compartilhados entre diversas classes
+      │
+      ├── 📄 .gitignore                   # Arquivo de regras para ignorar arquivos no versionamento Git
+      ├── 📄 _autoload.php                # Autoloader nativo e leve para carregamento dinâmico de classes
+      ├── 📄 index.php                    # Front Controller (ponto de entrada único de todas as requisições)
+      └── 📄 README.md                    # Documentação técnica do repositório
 
 ## 👨‍💻 Autor
 Desenvolvido por Leonardo Kotcheski Filipiaki.
