@@ -3,9 +3,13 @@
 namespace App\Classes;
 
 use Core\Bases\ClasseBase;
+use Core\Traits\UsaDatabase;
+use Core\Traits\UsaRepository;
 
 class Pessoa extends ClasseBase
 {
+    use UsaRepository;
+    use UsaDatabase;
 
     protected ?string $id = null;
 

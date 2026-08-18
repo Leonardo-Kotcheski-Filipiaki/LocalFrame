@@ -7,6 +7,10 @@ use Core\Notations\Ignorar;
 use ReflectionClass;
 use ReflectionNamedType;
 
+/**
+ * Responsável exclusivamente pela persistência local em arquivos .txt.
+ * Para persistência em banco de dados, utilize a trait \Core\Traits\UsaDatabase.
+ */
 class Repository
 {
     private array $lista = [];
@@ -23,6 +27,7 @@ class Repository
     {
         try {
             $classeFqcn = $classe::class;
+
             $lista = &$this->obterReferenciaLista($classeFqcn);
 
             $existe = false;
@@ -41,7 +46,7 @@ class Repository
             $this->salvarEmArquivo($classeFqcn, $lista);
             return true;
         } catch (\Throwable $th) {
-            Render::erro("Um erro ocorreu ao salvar as informações no banco!", null, 500);
+            error_log('[Repository::atualizarLista] ' . $th->getMessage());
             return false;
         }
     }
@@ -418,7 +423,7 @@ class Repository
 
     public function buscarPorId(string $id, string $classeFqcn): ?object
     {
-        $lista = &$this->obterReferenciaLista($classeFqcn);
+        $lista = $this->obterReferenciaLista($classeFqcn);
 
         foreach ($lista as $item) {
             if ($item->getId() == $id) {

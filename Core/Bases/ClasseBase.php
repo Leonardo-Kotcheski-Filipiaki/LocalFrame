@@ -2,38 +2,18 @@
 
 namespace Core\Bases;
 
-use Core\Essentials\Repository;
-
-abstract class ClasseBase
-{
-    protected static function repo(): Repository
-    {
-        static $repository = null;
-        if ($repository === null) {
-            $repository = new Repository();
-        }
-        return $repository;
-    }
-    public function salvar(): bool
-    {
-        return $this->repo()->atualizarLista($this);
-    }
-
-    public function remover(?string $id = null): bool
-    {
-        $idRemover = $id ?? ($this->id ?? null);
-        if (!$idRemover) return false;
-
-        return static::repo()->removerPorId($idRemover, static::class);
-    }
-
-    public static function buscar(string $id): ?static
-    {
-        return static::repo()->buscarPorId($id, static::class);
-    }
-
-    public static function buscarTodos(): array
-    {
-        return static::repo()->obterLista(static::class);
-    }
-}
+/**
+ * Classe base abstrata para todos os Models da aplicação.
+ *
+ * Por si só não possui comportamento de persistência.
+ * Inclua as traits abaixo conforme a necessidade de cada Model:
+ *
+ *   use \Core\Traits\UsaRepository;   — persistência em arquivos locais (.txt)
+ *   use \Core\Traits\UsaDatabase;     — queries fluentes via Database (PDO)
+ *
+ * Exemplo:
+ *   class Produto extends ClasseBase { use UsaRepository; }
+ *   class Pedido  extends ClasseBase { use UsaDatabase; }
+ *   class Cliente extends ClasseBase { use UsaRepository, UsaDatabase; }
+ */
+abstract class ClasseBase {}

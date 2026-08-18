@@ -14,7 +14,7 @@ class ClientesController extends ControllerBase
 {
     public function index()
     {
-        $clientes = Cliente::buscarTodos();
+        $clientes = Cliente::buscarTodosNoBanco();
         self::render("clientes/index", ['clientes' => $clientes]);
     }
 
@@ -30,11 +30,11 @@ class ClientesController extends ControllerBase
     {
         $cliente = (new ClienteStoreRequest(...$request->all()))->getCliente();
         if ($cliente == false) {
-            redirect("clientes/criar", true);
+            redirect("/clientes/criar", true);
         }
-        if ($cliente->salvar()) {
+        if ($cliente->salvarNoBanco()) {
             self::toast("Cliente salvo com sucesso", 's');
-            redirect("clientes", false);
+            redirect("/clientes", false);
         }
         
         self::toast("Erro ao salvar cliente", 'a');

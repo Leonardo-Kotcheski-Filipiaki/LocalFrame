@@ -3,7 +3,8 @@
 namespace App\Classes;
 
 use App\Enums\Nivel;
-
+use Core\Notations\Table;
+#[Table(table: "cliente")]
 class Cliente extends Pessoa
 {
     private Nivel $nivel;

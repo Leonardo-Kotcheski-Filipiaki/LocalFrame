@@ -19,8 +19,8 @@ Atualmente, o projeto executa de forma 100% local e serve como base para o estud
 * [x] Estrutura base para execução em ambiente local, com database local em arquivos.txt
 * [x] Ponto de entrada centralizado e ciclo de vida básico da requisição.
 * [x] Implementação utilizando syntax e recursos do PHP 8.4.
-* [X] Template engine baseada em como funciona no **Laravel**.
-* [X] Exception Handler para melhor visualização do erro.
+* [x] Template engine baseada em como funciona no **Laravel**.
+* [x] Exception Handler para melhor visualização do erro.
 
 ### 🟡 Próximos Passos (Em Breve)
 * [ ] **Camada de Banco de Dados:** Criação de uma abstração de conexão via PDO / Query Builder simplificado.
