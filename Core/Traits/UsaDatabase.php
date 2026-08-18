@@ -135,9 +135,11 @@ trait UsaDatabase
 
         $dados = $this->_extrairDados($reflection);
         try {
+            //Salvar dados no banco de forma a usar notations e tpt
             foreach ($dados as $key => $value) {
                 var_dump($key, $value);
             }
+            
             die;
             $db   = Database::instance();
             $stmt = $db->prepare("SELECT id FROM $tableName WHERE id = ?");
