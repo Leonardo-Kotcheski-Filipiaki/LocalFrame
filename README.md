@@ -23,7 +23,7 @@ Atualmente, o projeto executa de forma 100% local e serve como base para o estud
 * [x] Exception Handler para melhor visualização do erro.
 
 ### 🟡 Próximos Passos (Em Breve)
-* [ ] **Camada de Banco de Dados:** Criação de uma abstração de conexão via PDO / Query Builder simplificado.
+* [ ] **Camada de Banco de Dados:** Criação de conexão com banco de dados, habilitando persistência automatica com TPT e anotações/atributos do php.
 * [ ] **Aprimoramento de Tratamento de Exceções/Erros:**: Aprimorar o Exception Handler para uma visualização mais harmonica e inteligênte. 
 
 ---
