@@ -14,7 +14,8 @@ class ClientesController extends ControllerBase
 {
     public function index()
     {
-        $clientes = Cliente::buscarTodosNoBanco();
+        var_dump(Cliente::buscarNoBanco("6a859ef696cfd")->getNome());die;
+        // $clientes = Cliente::buscarTodosNoBanco();
         self::render("clientes/index", ['clientes' => $clientes]);
     }
 

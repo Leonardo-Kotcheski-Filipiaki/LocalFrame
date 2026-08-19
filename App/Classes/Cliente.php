@@ -3,8 +3,10 @@
 namespace App\Classes;
 
 use App\Enums\Nivel;
+use Core\Notations\Depends;
 use Core\Notations\Table;
-#[Table(table: "cliente")]
+
+#[Table(table: "cliente"), Depends(table: "pessoa", idColumn: "id", localIdColumn: "idPessoa")]
 class Cliente extends Pessoa
 {
     private Nivel $nivel;

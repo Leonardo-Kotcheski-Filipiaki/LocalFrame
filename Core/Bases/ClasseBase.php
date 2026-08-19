@@ -2,6 +2,8 @@
 
 namespace Core\Bases;
 
+use Core\Notations\Ignorar;
+
 /**
  * Classe base abstrata para todos os Models da aplicação.
  *
@@ -16,4 +18,5 @@ namespace Core\Bases;
  *   class Pedido  extends ClasseBase { use UsaDatabase; }
  *   class Cliente extends ClasseBase { use UsaRepository, UsaDatabase; }
  */
+#[Ignorar]
 abstract class ClasseBase {}

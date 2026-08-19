@@ -2,10 +2,19 @@
 
 namespace Core\Traits;
 
+use BackedEnum;
 use Core\Essentials\Database;
 use Core\Essentials\ExceptionHandler;
+use Core\Notations\Depends;
+use Core\Notations\Ignorar;
 use Core\Notations\Table;
+use Reflection;
 use ReflectionClass;
+use ReflectionEnum;
+use ReflectionNamedType;
+use ReflectionProperty;
+use ReflectionUnionType;
+use UnitEnum;
 
 /**
  * Fornece uma interface fluente de instância para construção de queries SQL via Database.
@@ -103,7 +112,7 @@ trait UsaDatabase
             $stmt->execute($this->_bindings);
             return $stmt->fetchAll();
         } catch (\Throwable $th) {
-            error_log('[UsaDatabase::get] ' . $th->getMessage());
+            ExceptionHandler::handle($th);
             return null;
         } finally {
             $this->_query = '';
@@ -125,36 +134,92 @@ trait UsaDatabase
     // Persistência no banco (convenientes para o CRUD básico)
     // -------------------------------------------------------------------------
 
-    /**
-     * Salva (INSERT ou UPDATE) a instância atual no banco de dados.
-     * A classe deve ter a anotação #[Table(table: "nome_tabela")].
-     */
     public function salvarNoBanco(): bool
     {
         $reflection = new ReflectionClass(static::class);
 
-        $dados = $this->_extrairDados($reflection);
+        // 1. Montar a hierarquia (de pai para filho)
+        $hierarquia = [];
+        $currentClass = $reflection;
+        while ($currentClass) {
+            array_unshift($hierarquia, $currentClass);
+            $currentClass = $currentClass->getParentClass();
+        }
+
+        // 2. Extrair dados agrupados pela classe de origem
+        $dadosPorClasse = $this->_extrairDadosPorClasse($reflection);
+        
+        // 3. ID global: pega o atual ou gera um novo
+        $idGlobal = $this->getId() ?: uniqid();
+
         try {
-            //Salvar dados no banco de forma a usar notations e tpt
-            foreach ($dados as $key => $value) {
-                var_dump($key, $value);
-            }
-            
-            die;
-            $db   = Database::instance();
-            $stmt = $db->prepare("SELECT id FROM $tableName WHERE id = ?");
-            $stmt->execute([$this->getId()]);
-            $existe = $stmt->fetch();
-
-            if ($existe) {
-                $dadosUpdate = $dados;
-                unset($dadosUpdate['id']);
-                return Database::update($tableName, $dadosUpdate, 'id = ?', [$this->getId()]);
+            $db = Database::instance();
+            if ($db && !$db->inTransaction()) {
+                $db->beginTransaction();
             }
 
-            return Database::insert($tableName, $dados);
+            $idPai = null;
+
+            // Percorre da base até a classe folha
+            foreach ($hierarquia as $classRef) {
+                $className = $classRef->getName();
+                $tableName = self::_resolverTabelaEstatico($classRef);
+                
+                if (!$tableName) {
+                    continue; // Pula se não for uma entidade mapeada
+                }
+
+                $dados = $dadosPorClasse[$className] ?? [];
+
+                // Lida com a dependência (Foreign Key TPT)
+                $dependsAttr = $classRef->getAttributes(\Core\Notations\Depends::class);
+                if (!empty($dependsAttr)) {
+                    $depends = $dependsAttr[0]->newInstance();
+                    $localIdCol = $depends->getLocalIdColumn();
+                    // Se depende de alguém e temos o ID pai, vinculamos
+                    if ($localIdCol && $idPai) {
+                        $dados[$localIdCol] = $idPai;
+                    }
+                }
+
+                // Todas as tabelas da hierarquia recebem o mesmo ID base
+                $dados['id'] = $idGlobal;
+
+                $stmt = $db->prepare("SELECT id FROM $tableName WHERE id = ?");
+                $stmt->execute([$dados['id']]);
+                $existe = $stmt->fetch();
+
+                if ($existe) {
+                    $dadosUpdate = $dados;
+                    unset($dadosUpdate['id']);
+                    if (!empty($dadosUpdate)) {
+                        Database::update($tableName, $dadosUpdate, 'id = ?', [$dados['id']]);
+                    }
+                } else {
+                    Database::insert($tableName, $dados);
+                }
+
+                // Guarda o ID para a próxima tabela na hierarquia (se houver)
+                $idPai = $dados['id'];
+            }
+
+            if ($db && $db->inTransaction()) {
+                $db->commit();
+            }
+
+            // Atualiza a instância com o novo ID se foi gerado
+            if (!$this->getId() && $reflection->hasProperty('id')) {
+                $propId = $reflection->getProperty('id');
+                $propId->setValue($this, $idGlobal);
+            }
+
+            return true;
         } catch (\Throwable $th) {
-            error_log('[UsaDatabase::salvarNoBanco] ' . $th->getMessage());
+            $db = Database::instance();
+            if ($db && $db->inTransaction()) {
+                $db->rollBack();
+            }
+            ExceptionHandler::handle($th);
             return false;
         }
     }
@@ -177,7 +242,7 @@ trait UsaDatabase
             $stmt = $db->prepare("DELETE FROM $tableName WHERE id = ?");
             return $stmt->execute([$idRemover]);
         } catch (\Throwable $th) {
-            error_log('[UsaDatabase::removerNoBanco] ' . $th->getMessage());
+            ExceptionHandler::handle($th);
             return false;
         }
     }
@@ -185,22 +250,48 @@ trait UsaDatabase
     /**
      * Busca um registro no banco por ID e retorna um array associativo.
      */
-    public static function buscarNoBanco(string $id): array|null
+    public static function buscarNoBanco(string $id): object|null
     {
         $reflection = new ReflectionClass(static::class);
-        $instance   = new static(...self::_argumentosFicticios($reflection));
-        $tableName  = $instance->_resolverTabela($reflection);
-
+        $novaInstancia   = $reflection->newInstanceWithoutConstructor();
+        $tableName  = $novaInstancia->_resolverTabela($reflection);
+        
+        $hierarquia = [];
+        $currentClass = $reflection;
+        while ($currentClass) {
+            if ($currentClass->getAttributes(Ignorar::class)){
+                $currentClass = $currentClass->getParentClass();
+                continue;
+            } else {
+                array_unshift($hierarquia, $currentClass);
+                $currentClass = $currentClass->getParentClass();
+            }
+        }
+        
+        $join = "";
+        for ($i = 1; $i < count($hierarquia); $i++) {
+            $join .= " INNER JOIN " . strtolower($hierarquia[$i-1]->getShortName()) . " ON ";
+            
+            $join .= strtolower($hierarquia[$i-1]->getShortName()) . ".id = ";
+            $idColumn = 'id';
+            if ($hierarquia[$i]->getAttributes(Depends::class)){
+                $idColumn = $hierarquia[$i]->getAttributes(Depends::class)[0]->newInstance()->getLocalIdColumn();
+            }
+            $join .= strtolower($hierarquia[$i]->getShortName()) . "." . $idColumn . " ";            
+        }
         if ($tableName === null) return null;
 
         try {
             $db   = Database::instance();
-            $stmt = $db->prepare("SELECT * FROM $tableName WHERE id = ? LIMIT 1");
+            $stmt = $db->prepare("SELECT * FROM $tableName " . $join . "  WHERE " . $tableName . ".id = ?");
             $stmt->execute([$id]);
             $resultado = $stmt->fetch();
-            return $resultado ?: null;
+            if ($resultado != null) {
+                static::tratar($resultado, $reflection, $novaInstancia);
+            }
+            return $novaInstancia ?: null;
         } catch (\Throwable $th) {
-            error_log('[UsaDatabase::buscarNoBanco] ' . $th->getMessage());
+            ExceptionHandler::handle($th);
             return null;
         }
     }
@@ -249,11 +340,11 @@ trait UsaDatabase
     }
 
     /**
-     * Extrai os dados da instância como array associativo para INSERT/UPDATE.
+     * Extrai os dados da instância agrupados pelo nome da classe origem.
      */
-    private function _extrairDados(ReflectionClass $reflection): array
+    private function _extrairDadosPorClasse(ReflectionClass $reflection): array
     {
-        $dados       = [];
+        $dados = [];
         $propriedades = $reflection->getProperties();
 
         foreach ($propriedades as $prop) {
@@ -275,9 +366,92 @@ trait UsaDatabase
             elseif ($valor instanceof \UnitEnum) $valor = strtolower($valor->name);
             elseif (is_object($valor) || is_array($valor)) $valor = json_encode($valor, JSON_UNESCAPED_UNICODE);
 
-            $dados[strtolower($prop->getDeclaringClass()->getShortName())][$nome] = $valor;
+            $dados[$prop->getDeclaringClass()->getName()][$nome] = $valor;
         }
 
         return $dados;
+    }
+
+    /**
+     * Trata o retorno dos dados
+     * @param array $resultado
+     * @param ReflectionClass $reflection
+     * @param object $novaInstancia
+     * @return void
+     */
+    private static function tratar(array $resultado, ReflectionClass $reflection, object &$novaInstancia) {
+        $propriedades = $reflection->getProperties();
+        foreach ($propriedades as $prop) {
+            $nomeProp = $prop->getName();
+
+            if (!array_key_exists($nomeProp, $resultado)) {
+                continue;
+            }
+            
+            $valor = $resultado[$prop->getName()];
+
+            if (static::aPropriedadeEhEnum($prop)) {
+                if ($valor === null) {
+                    $prop->setValue($novaInstancia, null);
+                    continue;
+                }
+
+                $classeEnum = $prop->getType()->getName();
+                $instanciaEnum = null;
+
+                if (is_subclass_of($classeEnum, BackedEnum::class)) {
+                    $instanciaEnum = $classeEnum::tryFrom($valor)
+                    ?? $classeEnum::tryFrom((int)$valor);
+                } else {
+                    $reflectionEnum = new ReflectionEnum($classeEnum);
+                    
+                    foreach ($reflectionEnum->getCases() as $case) {
+                        if (strcasecmp($case->getName(), (string)$valor) === 0) {
+                            $instanciaEnum = $case->getValue();
+                            break;
+                        }
+                        }
+                    }
+                    if (isset($instanciaEnum)) {
+                        $prop->setValue($novaInstancia, $instanciaEnum);
+                    }
+            } else {
+                $prop->setValue($novaInstancia, $valor);
+            }     
+        }
+    }
+    /**
+     * Verifica propriedade Enum
+     * @param ReflectionProperty $prop
+     * @return bool
+     */
+    private static function aPropriedadeEhEnum(ReflectionProperty $prop)  
+    {
+        $type = $prop->getType();
+
+        if (!$type) 
+        {
+            return false;
+        }
+
+        if ($type instanceof ReflectionNamedType)
+        {
+            return !$type->isBuiltin() && enum_exists($type->getName());
+        }
+
+        if ($type instanceof ReflectionUnionType) 
+        {
+            foreach ($type->getTypes() as $namedType) {
+                if ($namedType instanceof ReflectionNamedType && !$namedType->isBuiltin())
+                {
+                    if (enum_exists($namedType->getName()))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }

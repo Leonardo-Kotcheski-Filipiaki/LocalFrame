@@ -3,9 +3,11 @@
 namespace App\Classes;
 
 use Core\Bases\ClasseBase;
+use Core\Notations\Table;
 use Core\Traits\UsaDatabase;
 use Core\Traits\UsaRepository;
 
+#[Table("pessoa")]
 class Pessoa extends ClasseBase
 {
     use UsaRepository;

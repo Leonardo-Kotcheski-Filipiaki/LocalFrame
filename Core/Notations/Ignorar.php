@@ -10,7 +10,7 @@ use Attribute;
  * 
  * Uso: #[Ignorar] acima da propriedade
  */
-#[Attribute(Attribute::TARGET_PROPERTY)]
+#[Attribute(Attribute::TARGET_ALL)]
 class Ignorar
 {
 }
