@@ -16,7 +16,7 @@ class FuncionariosController extends ControllerBase
     {
         self::render("funcionarios/index",
         [
-            'funcionarios' => Funcionario::buscarTodos()
+            'funcionarios' => Funcionario::buscarTodosNoBanco()
         ]);
     }
 
@@ -34,7 +34,7 @@ class FuncionariosController extends ControllerBase
         if ($funcionario == false) {
             redirect("funcionarios/criar", true);
         } 
-        if ($funcionario->salvar()) {
+        if ($funcionario->salvarNoBanco()) {
             self::toast("Funcionario salvo com sucesso", "s");
             redirect("funcionarios", false);
         } else {
@@ -45,7 +45,7 @@ class FuncionariosController extends ControllerBase
 
     public function edit(string $id)
     {
-        $funcionario = Funcionario::buscar($id);
+        $funcionario = Funcionario::buscarNoBanco($id);
         if (!$funcionario) {
             self::toast("Funcionario não encontrado", 'a');
             redirect("funcionarios", false);
@@ -63,7 +63,7 @@ class FuncionariosController extends ControllerBase
         if ($funcionario == false) {
             redirect("/funcionarios/editar/" . $id, true);
         } 
-        if ($funcionario->salvar()) {
+        if ($funcionario->salvarNoBanco()) {
             self::toast("Funcionario salvo com sucesso", 's');
             redirect("/funcionarios", false);
         }
@@ -74,12 +74,12 @@ class FuncionariosController extends ControllerBase
 
     public function delete(string $id)
     {
-        $funcionario = Funcionario::buscar($id);
+        $funcionario = Funcionario::buscarNoBanco($id);
         if (!$funcionario) {
             self::toast("Funcionario não encontrado", 'a');
             redirect("/funcionarios", false);
         }
-        if ($funcionario->remover()) {
+        if ($funcionario->removerNoBanco()) {
             self::toast("Funcionario removido com sucesso", 's');
             redirect("/funcionarios", false);
         } else {

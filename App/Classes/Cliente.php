@@ -4,9 +4,11 @@ namespace App\Classes;
 
 use App\Enums\Nivel;
 use Core\Notations\Depends;
+use Core\Notations\OnDelete;
 use Core\Notations\Table;
 
 #[Table(table: "cliente"), Depends(table: "pessoa", idColumn: "id", localIdColumn: "idPessoa")]
+#[OnDelete(true)]
 class Cliente extends Pessoa
 {
     private Nivel $nivel;

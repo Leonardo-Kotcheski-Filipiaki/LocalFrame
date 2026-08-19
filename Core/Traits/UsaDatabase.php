@@ -140,12 +140,7 @@ trait UsaDatabase
 
         // 1. Montar a hierarquia (de pai para filho)
         $hierarquia = [];
-        $currentClass = $reflection;
-        while ($currentClass) {
-            array_unshift($hierarquia, $currentClass);
-            $currentClass = $currentClass->getParentClass();
-        }
-
+        self::_resolverHierarquias($reflection, $hierarquia);
         // 2. Extrair dados agrupados pela classe de origem
         $dadosPorClasse = $this->_extrairDadosPorClasse($reflection);
         
@@ -233,15 +228,50 @@ trait UsaDatabase
         if (!$idRemover) return false;
 
         $reflection = new ReflectionClass(static::class);
-        $tableName  = $this->_resolverTabela($reflection);
 
-        if ($tableName === null) return false;
+        $hierarquia = [];
+        static::_resolverHierarquias($reflection, $hierarquia);
+        
+        $excluirHierarquia = false;
+        $onDeleteAttr = $reflection->getAttributes(\Core\Notations\OnDelete::class);
+        if (!empty($onDeleteAttr)) {
+            $excluirHierarquia = $onDeleteAttr[0]->newInstance()->getExcluirHierarquia();
+        }
 
         try {
-            $db   = Database::instance();
-            $stmt = $db->prepare("DELETE FROM $tableName WHERE id = ?");
-            return $stmt->execute([$idRemover]);
+            $db = Database::instance();
+            if ($db && !$db->inTransaction()) {
+                $db->beginTransaction();
+            }
+
+            // A exclusão em banco relacional deve ocorrer da folha (filho) para a raiz (pai)
+            // A hierarquia está organizada: [0] = Pai, [1] = Filho
+            for ($i = count($hierarquia) - 1; $i >= 0; $i--) {
+                $classRef = $hierarquia[$i];
+                $tableName = self::_resolverTabelaEstatico($classRef);
+                
+                if (!$tableName) {
+                    continue;
+                }
+
+                $stmt = $db->prepare("DELETE FROM $tableName WHERE id = ?");
+                $stmt->execute([$idRemover]);
+
+                // Se não é para excluir a hierarquia inteira, excluímos apenas a classe alvo e encerramos.
+                if (!$excluirHierarquia) {
+                    break;
+                }
+            }
+
+            if ($db && $db->inTransaction()) {
+                $db->commit();
+            }
+            return true;
         } catch (\Throwable $th) {
+            $db = Database::instance();
+            if ($db && $db->inTransaction()) {
+                $db->rollBack();
+            }
             ExceptionHandler::handle($th);
             return false;
         }
@@ -257,16 +287,7 @@ trait UsaDatabase
         $tableName  = $novaInstancia->_resolverTabela($reflection);
         
         $hierarquia = [];
-        $currentClass = $reflection;
-        while ($currentClass) {
-            if ($currentClass->getAttributes(Ignorar::class)){
-                $currentClass = $currentClass->getParentClass();
-                continue;
-            } else {
-                array_unshift($hierarquia, $currentClass);
-                $currentClass = $currentClass->getParentClass();
-            }
-        }
+        static::_resolverHierarquias($reflection, $hierarquia);
         
         $join = "";
         for ($i = 1; $i < count($hierarquia); $i++) {
@@ -302,15 +323,39 @@ trait UsaDatabase
     public static function buscarTodosNoBanco(): array|null
     {
         $reflection = new ReflectionClass(static::class);
-        $tableName  = self::_resolverTabelaEstatico($reflection);
-
-        if ($tableName === null) return [];
+        $novaInstancia = $reflection->newInstanceWithoutConstructor();
+        $tableName  = $novaInstancia->_resolverTabela($reflection);
+        
+        $hierarquia = [];
+        static::_resolverHierarquias($reflection, $hierarquia);
+        
+        $join = "";
+        for ($i = 1; $i < count($hierarquia); $i++) {
+            $join .= " INNER JOIN " . strtolower($hierarquia[$i-1]->getShortName()) . " ON ";
+            
+            $join .= strtolower($hierarquia[$i-1]->getShortName()) . ".id = ";
+            $idColumn = 'id';
+            if ($hierarquia[$i]->getAttributes(Depends::class)){
+                $idColumn = $hierarquia[$i]->getAttributes(Depends::class)[0]->newInstance()->getLocalIdColumn();
+            }
+            $join .= strtolower($hierarquia[$i]->getShortName()) . "." . $idColumn . " ";            
+        }
+        if ($tableName === null) return null;
 
         try {
             $db   = Database::instance();
-            $stmt = $db->prepare("SELECT * FROM $tableName");
+            $stmt = $db->prepare("SELECT * FROM $tableName " . $join);
             $stmt->execute();
-            return $stmt->fetchAll();
+            $resultado = $stmt->fetchAll();
+            $dados = array();
+            if ($resultado != null) {
+                foreach ($resultado as $chave => $valor) {
+                    $novaInstancia = $reflection->newInstanceWithoutConstructor();
+                    static::tratar($valor, $reflection, $novaInstancia);
+                    $dados[] = $novaInstancia;
+                }
+            }
+            return $dados;
         } catch (\Throwable $th) {
             ExceptionHandler::handle($th);
             return null;
@@ -362,8 +407,8 @@ trait UsaDatabase
                 $valor = $prop->getValue($this);
             }
 
-            if ($valor instanceof \BackedEnum)  $valor = strtolower($valor->value);
-            elseif ($valor instanceof \UnitEnum) $valor = strtolower($valor->name);
+            if ($valor instanceof \BackedEnum)  $valor = $valor->value;
+            elseif ($valor instanceof \UnitEnum) $valor = $valor->name;
             elseif (is_object($valor) || is_array($valor)) $valor = json_encode($valor, JSON_UNESCAPED_UNICODE);
 
             $dados[$prop->getDeclaringClass()->getName()][$nome] = $valor;
@@ -395,10 +440,9 @@ trait UsaDatabase
                     $prop->setValue($novaInstancia, null);
                     continue;
                 }
-
+                
                 $classeEnum = $prop->getType()->getName();
                 $instanciaEnum = null;
-
                 if (is_subclass_of($classeEnum, BackedEnum::class)) {
                     $instanciaEnum = $classeEnum::tryFrom($valor)
                     ?? $classeEnum::tryFrom((int)$valor);
@@ -410,11 +454,11 @@ trait UsaDatabase
                             $instanciaEnum = $case->getValue();
                             break;
                         }
-                        }
                     }
-                    if (isset($instanciaEnum)) {
-                        $prop->setValue($novaInstancia, $instanciaEnum);
-                    }
+                }
+                if (isset($instanciaEnum)) {
+                    $prop->setValue($novaInstancia, $instanciaEnum);
+                }
             } else {
                 $prop->setValue($novaInstancia, $valor);
             }     
@@ -453,5 +497,18 @@ trait UsaDatabase
         }
 
         return false;
+    }
+
+    private static function _resolverHierarquias(ReflectionClass $reflection, array &$hierarquia) {
+        $currentClass = $reflection;
+        while ($currentClass) {
+            if ($currentClass->getAttributes(Ignorar::class)){
+                $currentClass = $currentClass->getParentClass();
+                continue;
+            } else {
+                array_unshift($hierarquia, $currentClass);
+                $currentClass = $currentClass->getParentClass();
+            }
+        }
     }
 }

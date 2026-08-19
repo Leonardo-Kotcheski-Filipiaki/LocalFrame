@@ -14,8 +14,7 @@ class ClientesController extends ControllerBase
 {
     public function index()
     {
-        var_dump(Cliente::buscarNoBanco("6a859ef696cfd")->getNome());die;
-        // $clientes = Cliente::buscarTodosNoBanco();
+        $clientes = Cliente::buscarTodosNoBanco();
         self::render("clientes/index", ['clientes' => $clientes]);
     }
 
@@ -45,7 +44,8 @@ class ClientesController extends ControllerBase
 
     public function edit(string $id)
     {
-        $cliente = Cliente::buscar($id);
+        $cliente = Cliente::buscarNoBanco($id);
+
         if ($cliente == false) {
             self::toast("Cliente não encontrado", 'a');
             redirect("clientes", false);
@@ -60,7 +60,7 @@ class ClientesController extends ControllerBase
         if ($cliente == false) {
             redirect("/clientes/editar/$id", true);
         }
-        if ($cliente->salvar()) {
+        if ($cliente->salvarNoBanco()) {
             self::toast("Cliente atualizado com sucesso", "s");
             redirect("/clientes", false);
         }
@@ -73,13 +73,14 @@ class ClientesController extends ControllerBase
 
     public function delete(string $id)
     {
-        $cliente = Cliente::buscar($id);
+        $cliente = Cliente::buscarNoBanco($id);
+        
         if ($cliente == false) {
             self::toast("Cliente não encontrado", 'a');
-            redirect("clientes", false);
+            redirect("/clientes", false);
         }
 
-        if ($cliente->remover()) {
+        if ($cliente->removerNoBanco()) {
             self::toast("Cliente excluído com sucesso", "s");
             redirect('/clientes', false);
         } else {

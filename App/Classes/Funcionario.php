@@ -4,7 +4,10 @@ namespace App\Classes;
 
 use App\Classes\Pessoa;
 use App\Enums\Cargo;
+use Core\Notations\Depends;
+use Core\Notations\Table;
 
+#[Table(table: "funcionario"), Depends(table: "pessoa", idColumn: "id", localIdColumn: "idPessoa")]
 class Funcionario extends Pessoa
 {
 
